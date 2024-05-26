@@ -1,8 +1,8 @@
-package Service;
+package service;
 
-import Model.EpicTask;
-import Model.SubTask;
-import Model.Task;
+import model.EpicTask;
+import model.SubTask;
+import model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;

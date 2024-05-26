@@ -1,7 +1,7 @@
-package Model;
+package model;
 
-import Model.Enums.TaskStatus;
-import Model.Interfaces.HasId;
+import model.enums.TaskStatus;
+import model.interfaces.HasId;
 
 import java.util.Objects;
 

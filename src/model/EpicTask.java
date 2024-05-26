@@ -1,6 +1,6 @@
-package Model;
+package model;
 
-import Model.Enums.TaskStatus;
+import model.enums.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.HashMap;

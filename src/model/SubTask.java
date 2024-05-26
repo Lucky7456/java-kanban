@@ -1,6 +1,6 @@
-package Model;
+package model;
 
-import Model.Enums.TaskStatus;
+import model.enums.TaskStatus;
 
 public class SubTask extends Task {
     private EpicTask epicTask;

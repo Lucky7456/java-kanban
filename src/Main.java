@@ -1,8 +1,8 @@
-import Model.EpicTask;
-import Model.SubTask;
-import Model.Task;
-import Model.Enums.TaskStatus;
-import Service.TaskManager;
+import model.EpicTask;
+import model.SubTask;
+import model.Task;
+import model.enums.TaskStatus;
+import service.TaskManager;
 
 public class Main {
 
