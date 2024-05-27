@@ -1,11 +1,10 @@
 package model;
 
 import model.enums.TaskStatus;
-import model.interfaces.HasId;
 
 import java.util.Objects;
 
-public class Task implements HasId {
+public class Task {
     public static int uniqueIdCounter;
     private final String name;
     private final String description;
@@ -39,7 +38,6 @@ public class Task implements HasId {
         return Objects.hashCode(id);
     }
 
-    @Override
     public int getId() {
         return id;
     }

@@ -7,7 +7,6 @@ import java.util.HashMap;
 
 public class EpicTask extends Task {
 
-    public static final int EMPTY_SUBTASKS = 0;
     public static final int BIT = 1;
     public static final int BIT_MASK_DONE = BIT << TaskStatus.DONE.ordinal();
     public static final int BIT_MASK_NEW = BIT << TaskStatus.NEW.ordinal();
@@ -50,13 +49,15 @@ public class EpicTask extends Task {
 
     @Override
     public TaskStatus getStatus() {
-        int status = EMPTY_SUBTASKS;
+        if (subTasks.isEmpty()) return TaskStatus.NEW;
+
+        int status = 0;
 
         for (SubTask st : subTasks.values()) {
             status |= BIT << st.getStatus().ordinal();
         }
 
-        if (status == EMPTY_SUBTASKS || status == BIT_MASK_NEW) {
+        if (status == BIT_MASK_NEW) {
             return TaskStatus.NEW;
         } else if (status == BIT_MASK_DONE) {
             return TaskStatus.DONE;
