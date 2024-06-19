@@ -2,13 +2,14 @@ import model.EpicTask;
 import model.SubTask;
 import model.Task;
 import model.enums.TaskStatus;
-import service.TaskManager;
+import service.interfaces.TaskManager;
+import util.Managers;
 
 public class Main {
 
     public static void main(String[] args) {
         System.out.println("Поехали!");
-        TaskManager tm = new TaskManager();
+        TaskManager tm = Managers.getDefault();
         Task t1 = new Task("first", "to do", TaskStatus.NEW);
         Task t2 = new Task("second", "to do", TaskStatus.NEW);
 
@@ -37,9 +38,8 @@ public class Main {
 
         System.out.println("___________________");
         System.out.println("tasks:\n");
-        System.out.println(tm.getTasks());
-        System.out.println(tm.getSubTasks());
-        System.out.println(tm.getEpicTasks());
+        printAllTasks(tm);
+
 
         tm.updateTask(new Task("first", "to do", t1.getId(), TaskStatus.DONE));
         tm.updateTask(new Task("second", "to do", t2.getId(), TaskStatus.IN_PROGRESS));
@@ -48,20 +48,53 @@ public class Main {
         tm.updateSubTask(new SubTask("third st", "sub 3", st3.getId(), TaskStatus.DONE));
         tm.updateEpicTask(new EpicTask("first epic", st1.getName() + "; " + st2.getName(), et1.getId()));
 
+        tm.getSubTaskById(st3.getId());
+        tm.getTaskById(t1.getId());
+        tm.getEpicTaskById(et2.getId());
+        tm.getTaskById(t2.getId());
+        tm.getTaskById(t1.getId());
+
         System.out.println("\n___________________");
         System.out.println("updated tasks:");
-        System.out.println(tm.getTasks());
-        System.out.println(tm.getSubTasks());
-        System.out.println(tm.getEpicTasks());
+        printAllTasks(tm);
+
+        tm.getEpicTaskById(et1.getId());
+        tm.getSubTaskById(st1.getId());
+        tm.getSubTaskById(st2.getId());
+        tm.getSubTaskById(st1.getId());
+        tm.getEpicTaskById(et2.getId());
+        tm.getTaskById(t1.getId());
 
         tm.removeTaskById(t2.getId());
         tm.removeEpicTaskById(et2.getId());
 
         System.out.println("\n___________________");
         System.out.println("after removing tasks:");
-        System.out.println(tm.getTasks());
-        System.out.println(tm.getSubTasks());
-        System.out.println(tm.getEpicTasks());
+        printAllTasks(tm);
 
+    }
+
+    private static void printAllTasks(TaskManager manager) {
+        System.out.println("Задачи:");
+        for (Task task : manager.getTasks()) {
+            System.out.println(task);
+        }
+        System.out.println("Эпики:");
+        for (EpicTask epic : manager.getEpicTasks()) {
+            System.out.println(epic);
+
+            for (Task task : manager.getSubTasks(epic)) {
+                System.out.println("--> " + task);
+            }
+        }
+        System.out.println("Подзадачи:");
+        for (Task subtask : manager.getSubTasks()) {
+            System.out.println(subtask);
+        }
+
+        System.out.println("История:");
+        for (Task task : manager.getHistory()) {
+            System.out.println(task);
+        }
     }
 }

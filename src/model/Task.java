@@ -5,7 +5,7 @@ import model.enums.TaskStatus;
 import java.util.Objects;
 
 public class Task {
-    public static int uniqueIdCounter;
+    private static int uniqueIdCounter;
     private final String name;
     private final String description;
     private final int id;
