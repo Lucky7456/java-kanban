@@ -7,7 +7,7 @@ import model.enums.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.interfaces.TaskManager;
-import util.Managers;
+import config.Managers;
 
 import static org.junit.jupiter.api.Assertions.*;
 

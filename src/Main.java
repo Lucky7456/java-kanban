@@ -3,7 +3,7 @@ import model.SubTask;
 import model.Task;
 import model.enums.TaskStatus;
 import service.interfaces.TaskManager;
-import util.Managers;
+import config.Managers;
 
 public class Main {
 

@@ -5,7 +5,6 @@ import model.SubTask;
 import model.Task;
 import service.interfaces.HistoryManager;
 import service.interfaces.TaskManager;
-import util.Managers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,11 +16,11 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, EpicTask> epicTasks;
     private final HistoryManager historyManager;
 
-    public InMemoryTaskManager() {
+    public InMemoryTaskManager(HistoryManager historyManager) {
         tasks = new HashMap<>();
         subTasks = new HashMap<>();
         epicTasks = new HashMap<>();
-        historyManager = Managers.getDefaultHistory();
+        this.historyManager = historyManager;
     }
 
     @Override
@@ -61,21 +60,21 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(int id) {
         Task task = tasks.get(id);
-        historyManager.add(task);
+        if (task != null) historyManager.add(task);
         return task;
     }
 
     @Override
     public SubTask getSubTaskById(int id) {
         SubTask task = subTasks.get(id);
-        historyManager.add(task);
+        if (task != null) historyManager.add(task);
         return task;
     }
 
     @Override
     public EpicTask getEpicTaskById(int id) {
         EpicTask task = epicTasks.get(id);
-        historyManager.add(task);
+        if (task != null) historyManager.add(task);
         return task;
     }
 

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.interfaces.HistoryManager;
-import util.Managers;
+import config.Managers;
 
 class InMemoryHistoryManagerTest {
     private final HistoryManager hm = Managers.getDefaultHistory();
