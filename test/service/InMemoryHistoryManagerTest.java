@@ -9,10 +9,11 @@ import service.interfaces.HistoryManager;
 import config.Managers;
 
 class InMemoryHistoryManagerTest {
-    private final HistoryManager hm = Managers.getDefaultHistory();
+    private HistoryManager hm;
 
     @BeforeEach
     void setUp() {
+        hm = Managers.getDefaultHistory();
         Task task = new Task("1", "1", 0, TaskStatus.NEW);
         hm.add(task);
     }

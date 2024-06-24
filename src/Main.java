@@ -1,9 +1,9 @@
+import config.Managers;
 import model.EpicTask;
 import model.SubTask;
 import model.Task;
 import model.enums.TaskStatus;
 import service.interfaces.TaskManager;
-import config.Managers;
 
 public class Main {
 
