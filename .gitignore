@@ -1,6 +1,13 @@
 # Compiled class file
 *.class
 
+.idea
+lib
+out
+.github
+**.iml
+**.xml
+
 # Log file
 *.log
 
