@@ -4,25 +4,92 @@ import model.Task;
 import service.interfaces.HistoryManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    public static final int ALLOWED_HISTORY_SIZE = 10;
-    private final List<Task> history;
+    private Node head;
+    private Node tail;
+    private int size = 0;
+
+    private final Map<Integer, Node> history;
 
     public InMemoryHistoryManager() {
-        history = new ArrayList<>();
+        history = new HashMap<>();
     }
 
     @Override
     public void add(Task task) {
         if (task == null) return;
-        if (history.size() == ALLOWED_HISTORY_SIZE) history.removeFirst();
-        history.add(task);
+        if (history.containsKey(task.getId())) {
+            removeNode(history.get(task.getId()));
+        }
+        linkLast(task);
+        history.put(task.getId(), tail);
+    }
+
+    @Override
+    public void remove(int id) {
+        if (history.containsKey(id)) {
+            removeNode(history.get(id));
+            history.remove(id);
+        }
     }
 
     @Override
     public List<Task> getHistory() {
-        return new ArrayList<>(history);
+        return getTasks();
+    }
+
+    private void linkLast(Task task) {
+        final Node oldTail = tail;
+        final Node newNode = new Node(oldTail, task, null);
+        tail = newNode;
+        if (oldTail == null)
+            head = newNode;
+        else
+            oldTail.next = newNode;
+        size++;
+    }
+
+    private List<Task> getTasks() {
+        List<Task> tasks = new ArrayList<>();
+        Node current = head;
+        while (current != null) {
+            tasks.add(current.task);
+            current = current.next;
+        }
+        return tasks;
+    }
+
+    private void removeNode(Node node) {
+        if (node == null) return;
+
+        final Node prev = node.prev;
+        final Node next = node.next;
+
+        if (head == node) head = next;
+        if (tail == node) tail = prev;
+
+        if (prev != null) prev.next = next;
+        if (next != null) next.prev = prev;
+        size--;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    class Node {
+        Node next;
+        Node prev;
+        Task task;
+
+        public Node(Node prev, Task task, Node next) {
+            this.task = task;
+            this.next = next;
+            this.prev = prev;
+        }
     }
 }
