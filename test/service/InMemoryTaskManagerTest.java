@@ -17,13 +17,33 @@ class InMemoryTaskManagerTest {
 
     @BeforeEach
     void setUp() {
-        Task task = new Task("1", "1", 0, TaskStatus.NEW);
-        SubTask subTask = new SubTask("2", "2", 1, TaskStatus.NEW);
-        EpicTask epicTask = new EpicTask("3", "3", 2);
+        Task task = new Task("first_task", "first task", 0, TaskStatus.NEW);
+        SubTask subTask = new SubTask("first_subtask", "first subtask", 1, TaskStatus.NEW);
+        SubTask subTask2 = new SubTask("second_subtask", "second subtask", 2, TaskStatus.NEW);
+        EpicTask epicTask = new EpicTask("first_epic", "first epic", 3);
+
+        subTask.setEpicTask(epicTask);
+        subTask2.setEpicTask(epicTask);
+        epicTask.addSubTask(subTask);
+        epicTask.addSubTask(subTask2);
 
         tm.createTask(task);
         tm.createSubTask(subTask);
+        tm.createSubTask(subTask2);
         tm.createEpicTask(epicTask);
+    }
+
+    @Test
+    void epicTaskShouldStoreRelevantSubtaskId() {
+        tm.removeSubTaskById(tm.getSubTasks().getFirst().getId());
+        assertEquals(tm.getEpicTasks().getFirst().getSubTasks().getFirst().getId(), 2, "epic task should store relevant subtask id");
+        assertEquals(tm.getEpicTasks().getFirst().getSubTasks().size(), 1, "subtasks size should be 1");
+    }
+
+    @Test
+    void subTasksShouldBeEmptyAfterRemovingEpicTasks() {
+        tm.removeAllEpicTasks();
+        assertTrue(tm.getSubTasks().isEmpty(), "subtasks should be empty");
     }
 
     @Test
@@ -37,15 +57,15 @@ class InMemoryTaskManagerTest {
     void shouldReturnTasksById() {
         Task task = tm.getTaskById(0);
         assertNotNull(task);
-        assertEquals(task.getName(), "1");
+        assertEquals(task.getName(), "first_task");
 
         SubTask subTask = tm.getSubTaskById(1);
         assertNotNull(subTask);
-        assertEquals(subTask.getName(), "2");
+        assertEquals(subTask.getName(), "first_subtask");
 
-        EpicTask epicTask = tm.getEpicTaskById(2);
+        EpicTask epicTask = tm.getEpicTaskById(3);
         assertNotNull(epicTask);
-        assertEquals(epicTask.getName(), "3");
+        assertEquals(epicTask.getName(), "first_epic");
     }
 
     @Test
