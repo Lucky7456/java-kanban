@@ -11,7 +11,6 @@ import java.util.Map;
 public class InMemoryHistoryManager implements HistoryManager {
     private Node head;
     private Node tail;
-    private int size = 0;
 
     private final Map<Integer, Node> history;
 
@@ -31,10 +30,10 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        if (history.containsKey(id)) {
-            removeNode(history.get(id));
-            history.remove(id);
-        }
+        if (!history.containsKey(id)) return;
+
+        removeNode(history.get(id));
+        history.remove(id);
     }
 
     @Override
@@ -46,11 +45,11 @@ public class InMemoryHistoryManager implements HistoryManager {
         final Node oldTail = tail;
         final Node newNode = new Node(oldTail, task, null);
         tail = newNode;
-        if (oldTail == null)
+        if (oldTail == null) {
             head = newNode;
-        else
+        } else {
             oldTail.next = newNode;
-        size++;
+        }
     }
 
     private List<Task> getTasks() {
@@ -74,11 +73,10 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         if (prev != null) prev.next = next;
         if (next != null) next.prev = prev;
-        size--;
     }
 
     public int size() {
-        return size;
+        return history.size();
     }
 
     class Node {
