@@ -3,13 +3,25 @@ import model.EpicTask;
 import model.SubTask;
 import model.Task;
 import model.enums.TaskStatus;
+import service.FileBackedTaskManager;
 import service.interfaces.TaskManager;
+
+import java.io.File;
+import java.io.IOException;
 
 public class Main {
 
     public static void main(String[] args) {
         System.out.println("Поехали!");
-        TaskManager tm = Managers.getDefault();
+
+        File file;
+        try {
+            file = File.createTempFile("data",".txt");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        TaskManager tm = Managers.getFileBackedTaskManager(file);
         Task t1 = new Task("first", "to do", TaskStatus.NEW);
         Task t2 = new Task("second", "to do", TaskStatus.NEW);
 
@@ -63,6 +75,19 @@ public class Main {
         printHistory(tm);
         tm.getSubTaskById(st3.getId());
         printHistory(tm);
+
+
+        System.out.println("___________________");
+        System.out.println("tasks before saving:\n");
+        printAllTasks(tm);
+        System.out.println("___________________\n");
+
+        TaskManager taskManager = FileBackedTaskManager.loadFromFile(file);
+
+        System.out.println("___________________");
+        System.out.println("tasks after loading from save:\n");
+        printAllTasks(taskManager);
+        System.out.println("___________________\n");
 
         tm.removeSubTaskById(st2.getId());
         printHistory(tm);
