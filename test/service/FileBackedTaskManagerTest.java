@@ -23,7 +23,7 @@ public class FileBackedTaskManagerTest {
     void setUp() {
         try {
             file = File.createTempFile("test", null);
-            tm = Managers.getFileBackedTaskManager(file);
+            tm = Managers.getDefault(file);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

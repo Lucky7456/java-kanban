@@ -21,7 +21,7 @@ public class Main {
             throw new RuntimeException(e);
         }
 
-        TaskManager tm = Managers.getFileBackedTaskManager(file);
+        TaskManager tm = Managers.getDefault(file);
         Task t1 = new Task("first", "to do", TaskStatus.NEW);
         Task t2 = new Task("second", "to do", TaskStatus.NEW);
 
