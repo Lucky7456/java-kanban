@@ -17,10 +17,14 @@ class InMemoryTaskManagerTest {
 
     @BeforeEach
     void setUp() {
-        Task task = new Task("first_task", "first task", 0, TaskStatus.NEW,30,null);
-        SubTask subTask = new SubTask("first_subtask", "first subtask", 1, TaskStatus.NEW,30,null);
-        SubTask subTask2 = new SubTask("second_subtask", "second subtask", 2, TaskStatus.NEW,30, null);
-        EpicTask epicTask = new EpicTask("first_epic", "first epic", 3);
+        Task task = new Task("first_task",
+                "first task", 0, TaskStatus.NEW,30,null);
+        SubTask subTask = new SubTask("first_subtask",
+                "first subtask", 1, TaskStatus.DONE,30,null);
+        SubTask subTask2 = new SubTask("second_subtask",
+                "second subtask", 2, TaskStatus.IN_PROGRESS,30, null);
+        EpicTask epicTask = new EpicTask("first_epic",
+                "first epic", 3);
 
         subTask.setEpicTask(epicTask);
         subTask2.setEpicTask(epicTask);
@@ -34,10 +38,24 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
+    void subTaskShouldStoreEpic() {
+        assertEquals(tm.getSubTasks().getFirst().getEpicTask(), tm.getEpicTasks().getFirst(),
+                "sub task should store relevant epic");
+    }
+
+    @Test
+    void epicShouldCalculateStatusCorrectly() {
+        assertEquals(tm.getEpicTasks().getFirst().getStatus(), TaskStatus.IN_PROGRESS,
+                "epic task should calculate status correctly");
+    }
+
+    @Test
     void epicTaskShouldStoreRelevantSubtaskId() {
         tm.removeSubTaskById(tm.getSubTasks().getFirst().getId());
-        assertEquals(tm.getEpicTasks().getFirst().getSubTasks().getFirst().getId(), 2, "epic task should store relevant subtask id");
-        assertEquals(tm.getEpicTasks().getFirst().getSubTasks().size(), 1, "subtasks size should be 1");
+        assertEquals(tm.getEpicTasks().getFirst().getSubTasks().getFirst().getId(), 2,
+                "epic task should store relevant subtask id");
+        assertEquals(tm.getEpicTasks().getFirst().getSubTasks().size(), 1,
+                "subtasks size should be 1");
     }
 
     @Test

@@ -56,6 +56,20 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
+    void testSaveFileException() {
+        assertDoesNotThrow(() -> {
+            tm.removeAllTasks();
+        }, "saving file should not throw exception");
+    }
+
+    @Test
+    void testLoadFileException() {
+        assertDoesNotThrow(() -> {
+            FileBackedTaskManager.loadFromFile(file);
+        }, "loading file should not throw exception");
+    }
+
+    @Test
     void shouldSaveTasksToFile() {
         String load;
         try {
