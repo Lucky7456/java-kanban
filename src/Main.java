@@ -8,6 +8,7 @@ import service.interfaces.TaskManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class Main {
 
@@ -16,21 +17,27 @@ public class Main {
 
         File file;
         try {
-            file = File.createTempFile("data",".txt");
+            file = File.createTempFile("data", ".txt");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
+        LocalDateTime taskStart1 = LocalDateTime.now().plusDays(1);
+        LocalDateTime taskStart2 = taskStart1.plusMinutes(50);
+        LocalDateTime taskStart3 = taskStart1.plusMinutes(20);
+        LocalDateTime taskStart4 = taskStart2.plusMinutes(30);
+        LocalDateTime taskStart5 = taskStart2.plusMinutes(30);
+
         TaskManager tm = Managers.getDefault(file);
-        Task t1 = new Task("first", "to do", TaskStatus.NEW,30);
-        Task t2 = new Task("second", "to do", TaskStatus.NEW,30);
+        Task t1 = new Task("first", "to do", TaskStatus.NEW, 30, taskStart1);
+        Task t2 = new Task("second", "to do", TaskStatus.NEW, 30, taskStart2);
 
         tm.createTask(t1);
         tm.createTask(t2);
 
-        SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.NEW,30);
-        SubTask st2 = new SubTask("second st", "sub 2", TaskStatus.NEW,30);
-        SubTask st3 = new SubTask("third st", "sub 3", TaskStatus.NEW,30);
+        SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.NEW, 30, taskStart3);
+        SubTask st2 = new SubTask("second st", "sub 2", TaskStatus.NEW, 30, taskStart4);
+        SubTask st3 = new SubTask("third st", "sub 3", TaskStatus.NEW, 30, taskStart5);
         EpicTask et1 = new EpicTask("first epic", "epic with 3 subs");
         st1.setEpicTask(et1);
         st2.setEpicTask(et1);
@@ -111,6 +118,11 @@ public class Main {
         System.out.println("Подзадачи:");
         for (Task subtask : manager.getSubTasks()) {
             System.out.println(subtask);
+        }
+
+        System.out.println("приоритетные задачи:");
+        for (Task task : manager.getPrioritizedTasks()) {
+            System.out.println(task);
         }
 
         printHistory(manager);

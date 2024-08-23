@@ -5,22 +5,39 @@ import model.SubTask;
 import model.Task;
 import service.interfaces.HistoryManager;
 import service.interfaces.TaskManager;
+import util.TimeMapper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks;
     private final HashMap<Integer, SubTask> subTasks;
     private final HashMap<Integer, EpicTask> epicTasks;
     private final HistoryManager historyManager;
+    private final TreeSet<Task> priorityTasks;
+    private final TimeMapper timeMapper;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         tasks = new HashMap<>();
         subTasks = new HashMap<>();
         epicTasks = new HashMap<>();
         this.historyManager = historyManager;
+        priorityTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+        timeMapper = new TimeMapper(LocalDateTime.now());
+    }
+
+    private void add(Task task) {
+        if (task.getStartTime() == null) return;
+        if (timeMapper.hasCollision(task)) return;
+
+        timeMapper.add(task);
+        priorityTasks.add(task);
+    }
+
+    @Override
+    public ArrayList<Task> getPrioritizedTasks() {
+        return new ArrayList<>(priorityTasks);
     }
 
     @Override
@@ -89,11 +106,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createTask(Task task) {
+        add(task);
         tasks.put(task.getId(), task);
     }
 
     @Override
     public void createSubTask(SubTask st) {
+        add(st);
         subTasks.put(st.getId(), st);
     }
 
@@ -104,11 +123,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) {
+        add(task);
         tasks.put(task.getId(), task);
     }
 
     @Override
     public void updateSubTask(SubTask st) {
+        add(st);
         EpicTask et = subTasks.get(st.getId()).getEpicTask();
         et.replaceSubTask(st);
         st.setEpicTask(et);
