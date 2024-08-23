@@ -28,11 +28,6 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-        return "SubTask{" +
-                "epicTask.getName()='" + epicTask.getName() + '\'' +
-                ", name='" + getName() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", status=" + getStatus() +
-                '}';
+        return String.format("%s,%s,%s,%s,%s,%s", getId(), "SUBTASK", getName(), getStatus(), getDescription(), epicTask.getId());
     }
 }
