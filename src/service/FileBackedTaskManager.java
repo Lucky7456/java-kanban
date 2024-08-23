@@ -15,6 +15,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File saveFile;
@@ -38,37 +41,52 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String[] taskLines = data.split("\n");
         for (String taskLine : taskLines) {
             String[] taskData = taskLine.split(",");
-            switch (taskData[1]) {
+            String taskType = taskData[1];
+            if (taskType.equals("type")) continue;
+            String name = taskData[2];
+            String description = taskData[4];
+            int id = Integer.parseInt(taskData[0]);
+            TaskStatus status = TaskStatus.valueOf(taskData[3]);
+            int epicId = Integer.parseInt(taskData[5]);
+            long duration = Long.parseLong(taskData[6]);
+            boolean hasStartTime = !taskData[7].equals("null");
+            LocalDateTime startTime = hasStartTime ?
+                    LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(taskData[7])), ZoneId.systemDefault())
+                    : null;
+
+            switch (taskType) {
                 case "TASK":
                     Task task = new Task(
-                            taskData[2],
-                            taskData[4],
-                            Integer.parseInt(taskData[0]),
-                            TaskStatus.valueOf(taskData[3])
+                            name,
+                            description,
+                            id,
+                            status,
+                            duration,
+                            startTime
                     );
                     tm.createTask(task);
                     break;
                 case "EPIC":
                     EpicTask epicTask = new EpicTask(
-                            taskData[2],
-                            taskData[4],
-                            Integer.parseInt(taskData[0])
+                            name,
+                            description,
+                            id
                     );
                     tm.createEpicTask(epicTask);
                     break;
                 case "SUBTASK":
                     SubTask subTask = new SubTask(
-                            taskData[2],
-                            taskData[4],
-                            Integer.parseInt(taskData[0]),
-                            TaskStatus.valueOf(taskData[3])
+                            name,
+                            description,
+                            id,
+                            status,
+                            duration,
+                            startTime
                     );
-                    EpicTask et = tm.getEpicTaskById(Integer.parseInt(taskData[5]));
+                    EpicTask et = tm.getEpicTaskById(epicId);
                     et.addSubTask(subTask);
                     subTask.setEpicTask(et);
                     tm.createSubTask(subTask);
-                    break;
-                case "type":
                     break;
             }
         }
@@ -83,7 +101,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private String saveTasksToString() {
-        StringBuilder data = new StringBuilder("id,type,name,status,description,epic\n");
+        StringBuilder data = new StringBuilder("id,type,name,status,description,epic,duration,startTime\n");
         for (Task task : getAllTasks()) {
             data.append(task.toString()).append("\n");
         }

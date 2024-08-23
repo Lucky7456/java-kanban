@@ -2,8 +2,12 @@ package model;
 
 import model.enums.TaskStatus;
 
+import java.time.ZoneId;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class EpicTask extends Task {
 
@@ -20,14 +24,13 @@ public class EpicTask extends Task {
     public EpicTask(String name,
                     String description,
                     int id) {
-        super(name, description, id, TaskStatus.NEW);
+        super(name, description, id, TaskStatus.NEW, 0, null);
         this.subTasks = new HashMap<>();
     }
 
     public EpicTask(String name,
-                    String description
-    ) {
-        super(name, description, TaskStatus.NEW);
+                    String description) {
+        super(name, description, TaskStatus.NEW, 0);
         this.subTasks = new HashMap<>();
     }
 
@@ -67,7 +70,47 @@ public class EpicTask extends Task {
     }
 
     @Override
+    public Duration getDuration() {
+        return Duration.ofMinutes(subTasks.values()
+                .stream()
+                .filter(subTask -> subTask.getStartTime() != null)
+                .mapToLong(subTask -> subTask.getDuration().toMinutes())
+                .sum()
+        );
+    }
+
+    @Override
+    public LocalDateTime getStartTime() {
+        return subTasks.values()
+                .stream()
+                .map(Task::getStartTime)
+                .filter(Objects::nonNull)
+                .min(LocalDateTime::compareTo)
+                .orElse(null);
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return subTasks.values()
+                .stream()
+                .map(Task::getStartTime)
+                .filter(Objects::nonNull)
+                .max(LocalDateTime::compareTo)
+                .orElse(null);
+    }
+
+    @Override
     public String toString() {
-        return String.format("%s,%s,%s,%s,%s,", getId(), "EPIC", getName(), getStatus(), getDescription());
+        return String.format("%s,%s,%s,%s,%s,0,%s,%s",
+                getId(),
+                "EPIC",
+                getName(),
+                getStatus(),
+                getDescription(),
+                getDuration().toMinutes(),
+                getStartTime() != null ?
+                        getStartTime().atZone(ZoneId.systemDefault()).toEpochSecond()
+                        : null
+        );
     }
 }

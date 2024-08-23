@@ -15,13 +15,13 @@ class InMemoryHistoryManagerTest {
     @BeforeEach
     void setUp() {
         hm = Managers.getDefaultHistory();
-        Task task = new Task("first_task_name", "first", 0, TaskStatus.NEW);
+        Task task = new Task("first_task_name", "first", 0, TaskStatus.NEW, 30, null);
         hm.add(task);
     }
 
     @Test
     void historyShouldSaveOrderOfSeenTasks() {
-        Task task = new Task("second_task_name", "second", 1, TaskStatus.IN_PROGRESS);
+        Task task = new Task("second_task_name", "second", 1, TaskStatus.IN_PROGRESS, 45, null);
         hm.add(task);
 
         Task historyTask1 = hm.getHistory().getFirst();

@@ -17,9 +17,9 @@ class InMemoryTaskManagerTest {
 
     @BeforeEach
     void setUp() {
-        Task task = new Task("first_task", "first task", 0, TaskStatus.NEW);
-        SubTask subTask = new SubTask("first_subtask", "first subtask", 1, TaskStatus.NEW);
-        SubTask subTask2 = new SubTask("second_subtask", "second subtask", 2, TaskStatus.NEW);
+        Task task = new Task("first_task", "first task", 0, TaskStatus.NEW,30,null);
+        SubTask subTask = new SubTask("first_subtask", "first subtask", 1, TaskStatus.NEW,30,null);
+        SubTask subTask2 = new SubTask("second_subtask", "second subtask", 2, TaskStatus.NEW,30, null);
         EpicTask epicTask = new EpicTask("first_epic", "first epic", 3);
 
         subTask.setEpicTask(epicTask);
@@ -70,7 +70,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void taskWithGeneratedIdShouldNotConflictWithTaskWithAssignedId() {
-        Task task = new Task("4", "4", TaskStatus.NEW);
+        Task task = new Task("4", "4", TaskStatus.NEW,30);
         tm.createTask(task);
         assertEquals(tm.getTasks().size(), 1);
         assertNotNull(tm.getTaskById(task.getId()));

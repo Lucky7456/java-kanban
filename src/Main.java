@@ -22,15 +22,15 @@ public class Main {
         }
 
         TaskManager tm = Managers.getDefault(file);
-        Task t1 = new Task("first", "to do", TaskStatus.NEW);
-        Task t2 = new Task("second", "to do", TaskStatus.NEW);
+        Task t1 = new Task("first", "to do", TaskStatus.NEW,30);
+        Task t2 = new Task("second", "to do", TaskStatus.NEW,30);
 
         tm.createTask(t1);
         tm.createTask(t2);
 
-        SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.NEW);
-        SubTask st2 = new SubTask("second st", "sub 2", TaskStatus.NEW);
-        SubTask st3 = new SubTask("third st", "sub 3", TaskStatus.NEW);
+        SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.NEW,30);
+        SubTask st2 = new SubTask("second st", "sub 2", TaskStatus.NEW,30);
+        SubTask st3 = new SubTask("third st", "sub 3", TaskStatus.NEW,30);
         EpicTask et1 = new EpicTask("first epic", "epic with 3 subs");
         st1.setEpicTask(et1);
         st2.setEpicTask(et1);
