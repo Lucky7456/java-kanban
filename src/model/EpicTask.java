@@ -54,15 +54,13 @@ public class EpicTask extends Task {
     public TaskStatus getStatus() {
         if (subTasks.isEmpty()) return TaskStatus.NEW;
 
-        int status = 0;
+        int calculatedStatus = subTasks.values().stream()
+                .map(subTask -> subTask.getStatus().ordinal())
+                .reduce(0, (total, status) -> total | BIT << status);
 
-        for (SubTask st : subTasks.values()) {
-            status |= BIT << st.getStatus().ordinal();
-        }
-
-        if (status == BIT_MASK_NEW) {
+        if (calculatedStatus == BIT_MASK_NEW) {
             return TaskStatus.NEW;
-        } else if (status == BIT_MASK_DONE) {
+        } else if (calculatedStatus == BIT_MASK_DONE) {
             return TaskStatus.DONE;
         } else {
             return TaskStatus.IN_PROGRESS;

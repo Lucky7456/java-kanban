@@ -35,9 +35,9 @@ public class Main {
         tm.createTask(t1);
         tm.createTask(t2);
 
-        SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.NEW, 30, taskStart3);
-        SubTask st2 = new SubTask("second st", "sub 2", TaskStatus.NEW, 30, taskStart4);
-        SubTask st3 = new SubTask("third st", "sub 3", TaskStatus.NEW, 30, taskStart5);
+        SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.IN_PROGRESS, 30, taskStart3);
+        SubTask st2 = new SubTask("second st", "sub 2", TaskStatus.DONE, 30, taskStart4);
+        SubTask st3 = new SubTask("third st", "sub 3", TaskStatus.IN_PROGRESS, 30, taskStart5);
         EpicTask et1 = new EpicTask("first epic", "epic with 3 subs");
         st1.setEpicTask(et1);
         st2.setEpicTask(et1);
@@ -104,34 +104,24 @@ public class Main {
 
     private static void printAllTasks(TaskManager manager) {
         System.out.println("Задачи:");
-        for (Task task : manager.getTasks()) {
-            System.out.println(task);
-        }
-        System.out.println("Эпики:");
-        for (EpicTask epic : manager.getEpicTasks()) {
-            System.out.println(epic);
+        manager.getTasks().forEach(System.out::println);
 
-            for (Task task : manager.getSubTasks(epic)) {
-                System.out.println("--> " + task);
-            }
-        }
+        System.out.println("Эпики:");
+        manager.getEpicTasks().forEach(epic -> {
+            System.out.println(epic);
+            manager.getSubTasks(epic).forEach(task -> System.out.println("--> " + task));
+        });
         System.out.println("Подзадачи:");
-        for (Task subtask : manager.getSubTasks()) {
-            System.out.println(subtask);
-        }
+        manager.getSubTasks().forEach(System.out::println);
 
         System.out.println("приоритетные задачи:");
-        for (Task task : manager.getPrioritizedTasks()) {
-            System.out.println(task);
-        }
+        manager.getPrioritizedTasks().forEach(System.out::println);
 
         printHistory(manager);
     }
 
     private static void printHistory(TaskManager manager) {
         System.out.println("История:");
-        for (Task task : manager.getHistory()) {
-            System.out.println(task);
-        }
+        manager.getHistory().forEach(System.out::println);
     }
 }

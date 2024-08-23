@@ -28,13 +28,13 @@ public class FileBackedTaskManagerTest {
             throw new RuntimeException(e);
         }
 
-        Task t1 = new Task("first", "to do", TaskStatus.NEW,30);
-        Task t2 = new Task("second", "to do", TaskStatus.NEW,30);
+        Task t1 = new Task("first", "to do", TaskStatus.NEW, 30);
+        Task t2 = new Task("second", "to do", TaskStatus.NEW, 30);
 
         tm.createTask(t1);
         tm.createTask(t2);
 
-        SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.NEW,30);
+        SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.NEW, 30);
         EpicTask et1 = new EpicTask("first epic", "epic with 1 sub");
         st1.setEpicTask(et1);
         et1.addSubTask(st1);
@@ -65,9 +65,7 @@ public class FileBackedTaskManagerTest {
         }
 
         StringBuilder save = new StringBuilder("id,type,name,status,description,epic,duration,startTime\n");
-        for (Task task : tm.getAllTasks()) {
-            save.append(task.toString()).append("\n");
-        }
+        tm.getAllTasks().forEach(task -> save.append(task.toString()).append("\n"));
 
         assertEquals(save.toString(), load, "should save tasks to file");
     }
