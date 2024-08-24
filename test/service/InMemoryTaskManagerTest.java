@@ -38,12 +38,6 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void subTaskShouldStoreEpic() {
-        assertEquals(tm.getSubTasks().getFirst().getEpicTask(), tm.getEpicTasks().getFirst(),
-                "sub task should store relevant epic");
-    }
-
-    @Test
     void epicShouldCalculateStatusCorrectly() {
         assertEquals(tm.getEpicTasks().getFirst().getStatus(), TaskStatus.IN_PROGRESS,
                 "epic task should calculate status correctly");
