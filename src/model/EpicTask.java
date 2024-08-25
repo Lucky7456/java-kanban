@@ -91,7 +91,7 @@ public class EpicTask extends Task {
     public LocalDateTime getEndTime() {
         return subTasks.values()
                 .stream()
-                .map(Task::getStartTime)
+                .map(Task::getEndTime)
                 .filter(Objects::nonNull)
                 .max(LocalDateTime::compareTo)
                 .orElse(null);
