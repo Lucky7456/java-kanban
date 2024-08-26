@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 
 class EpicTaskTest {
 
-    private final SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.IN_PROGRESS, 30);
-    private final SubTask st2 = new SubTask("second st", "sub 2", TaskStatus.DONE, 30);
-    private final SubTask st3 = new SubTask("third st", "sub 3", TaskStatus.NEW, 30);
+    private final SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.IN_PROGRESS, 1, 30);
+    private final SubTask st2 = new SubTask("second st", "sub 2", TaskStatus.DONE, 1, 30);
+    private final SubTask st3 = new SubTask("third st", "sub 3", TaskStatus.NEW, 1, 30);
 
     @Test
     void ShouldCalculateStatusCorrectlyOnlyNEW() {
@@ -31,6 +31,7 @@ class EpicTaskTest {
         et.addSubTask(st3);
         Assertions.assertEquals(et.getStatus(), TaskStatus.IN_PROGRESS);
     }
+
     @Test
     void ShouldCalculateStatusCorrectlyInProgress() {
         EpicTask et = new EpicTask("epic", "epic with 3 subs");

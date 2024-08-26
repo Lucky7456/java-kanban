@@ -76,17 +76,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     tm.createEpicTask(epicTask);
                     break;
                 case TaskType.SubTask:
+                    EpicTask et = tm.getEpicTaskById(epicId).orElse(null);
+                    if (et == null) throw new ManagerLoadException();
                     SubTask subTask = new SubTask(
                             name,
                             description,
                             id,
                             status,
+                            et.getId(),
                             duration,
                             startTime
                     );
-                    EpicTask et = tm.getEpicTaskById(epicId);
                     et.addSubTask(subTask);
-                    subTask.setEpicTask(et);
                     tm.createSubTask(subTask);
                     break;
             }

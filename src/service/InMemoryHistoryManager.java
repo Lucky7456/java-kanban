@@ -75,11 +75,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (next != null) next.prev = prev;
     }
 
-    public int size() {
-        return history.size();
-    }
-
-    class Node {
+    static class Node {
         Node next;
         Node prev;
         Task task;

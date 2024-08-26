@@ -35,13 +35,10 @@ public class Main {
         tm.createTask(t1);
         tm.createTask(t2);
 
-        SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.IN_PROGRESS, 30, taskStart3);
-        SubTask st2 = new SubTask("second st", "sub 2", TaskStatus.DONE, 30, taskStart4);
-        SubTask st3 = new SubTask("third st", "sub 3", TaskStatus.IN_PROGRESS, 30, taskStart5);
         EpicTask et1 = new EpicTask("first epic", "epic with 3 subs");
-        st1.setEpicTask(et1);
-        st2.setEpicTask(et1);
-        st3.setEpicTask(et1);
+        SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.IN_PROGRESS, et1.getId(), 30, taskStart3);
+        SubTask st2 = new SubTask("second st", "sub 2", TaskStatus.DONE, et1.getId(), 30, taskStart4);
+        SubTask st3 = new SubTask("third st", "sub 3", TaskStatus.IN_PROGRESS, et1.getId(), 30, taskStart5);
         et1.addSubTask(st1);
         et1.addSubTask(st2);
         et1.addSubTask(st3);

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileBackedTaskManagerTest {
     private TaskManager tm;
@@ -34,9 +35,8 @@ public class FileBackedTaskManagerTest {
         tm.createTask(t1);
         tm.createTask(t2);
 
-        SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.NEW, 30);
         EpicTask et1 = new EpicTask("first epic", "epic with 1 sub");
-        st1.setEpicTask(et1);
+        SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.NEW, et1.getId(), 30);
         et1.addSubTask(st1);
 
         tm.createSubTask(st1);
@@ -57,9 +57,7 @@ public class FileBackedTaskManagerTest {
 
     @Test
     void testSaveFileException() {
-        assertDoesNotThrow(() -> {
-            tm.removeAllTasks();
-        }, "saving file should not throw exception");
+        assertDoesNotThrow(() -> tm.removeAllTasks(), "saving file should not throw exception");
     }
 
     @Test
@@ -89,8 +87,9 @@ public class FileBackedTaskManagerTest {
         SubTask subTask = tm.getSubTasks().getFirst();
 
         TaskManager taskManager = FileBackedTaskManager.loadFromFile(file);
-
-        assertEquals(taskManager.getSubTaskById(subTask.getId()).getEpicTask(), subTask.getEpicTask(), "sub tasks should have equal epic tasks");
+        SubTask optSt = taskManager.getSubTaskById(subTask.getId()).orElse(null);
+        assertNotNull(optSt);
+        assertEquals(optSt.getEpicTaskId(), subTask.getEpicTaskId(), "sub tasks should have equal epic tasks");
         assertEquals(taskManager.getTasks().size(), tm.getTasks().size(), "task list sizes should be equal");
         assertEquals(taskManager.getSubTasks().size(), tm.getSubTasks().size(), "sub task list sizes should be equal");
         assertEquals(taskManager.getEpicTasks().size(), tm.getEpicTasks().size(), "task list sizes should be equal");

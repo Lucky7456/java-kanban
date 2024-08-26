@@ -7,38 +7,40 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 public class SubTask extends Task {
-    private EpicTask epicTask;
+    private final int epicTaskId;
 
     public SubTask(String name,
                    String description,
                    int id,
                    TaskStatus status,
+                   int epicTaskId,
                    long duration,
                    LocalDateTime startTime) {
         super(name, description, id, status, duration, startTime);
+        this.epicTaskId = epicTaskId;
     }
 
     public SubTask(String name,
                    String description,
                    TaskStatus status,
+                   int epicTaskId,
                    long duration,
                    LocalDateTime startTime) {
         super(name, description, status, duration, startTime);
+        this.epicTaskId = epicTaskId;
     }
 
     public SubTask(String name,
                    String description,
                    TaskStatus status,
+                   int epicTaskId,
                    long duration) {
         super(name, description, status, duration);
+        this.epicTaskId = epicTaskId;
     }
 
-    public EpicTask getEpicTask() {
-        return epicTask;
-    }
-
-    public void setEpicTask(EpicTask epicTask) {
-        this.epicTask = epicTask;
+    public int getEpicTaskId() {
+        return epicTaskId;
     }
 
     @Override
@@ -49,7 +51,7 @@ public class SubTask extends Task {
                 getName(),
                 getStatus(),
                 getDescription(),
-                epicTask.getId(),
+                epicTaskId,
                 getDuration().toMinutes(),
                 getStartTime() != null ?
                         getStartTime().atZone(ZoneId.systemDefault()).toEpochSecond()

@@ -19,15 +19,13 @@ class InMemoryTaskManagerTest {
     void setUp() {
         Task task = new Task("first_task",
                 "first task", 0, TaskStatus.NEW,30,null);
-        SubTask subTask = new SubTask("first_subtask",
-                "first subtask", 1, TaskStatus.DONE,30,null);
-        SubTask subTask2 = new SubTask("second_subtask",
-                "second subtask", 2, TaskStatus.IN_PROGRESS,30, null);
         EpicTask epicTask = new EpicTask("first_epic",
                 "first epic", 3);
+        SubTask subTask = new SubTask("first_subtask",
+                "first subtask", 1, TaskStatus.DONE, epicTask.getId(),30,null);
+        SubTask subTask2 = new SubTask("second_subtask",
+                "second subtask", 2, TaskStatus.IN_PROGRESS, epicTask.getId(),30, null);
 
-        subTask.setEpicTask(epicTask);
-        subTask2.setEpicTask(epicTask);
         epicTask.addSubTask(subTask);
         epicTask.addSubTask(subTask2);
 
@@ -67,15 +65,15 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldReturnTasksById() {
-        Task task = tm.getTaskById(0);
+        Task task = tm.getTaskById(0).orElse(null);
         assertNotNull(task);
         assertEquals(task.getName(), "first_task");
 
-        SubTask subTask = tm.getSubTaskById(1);
+        SubTask subTask = tm.getSubTaskById(1).orElse(null);
         assertNotNull(subTask);
         assertEquals(subTask.getName(), "first_subtask");
 
-        EpicTask epicTask = tm.getEpicTaskById(3);
+        EpicTask epicTask = tm.getEpicTaskById(3).orElse(null);
         assertNotNull(epicTask);
         assertEquals(epicTask.getName(), "first_epic");
     }
@@ -84,8 +82,9 @@ class InMemoryTaskManagerTest {
     void taskWithGeneratedIdShouldNotConflictWithTaskWithAssignedId() {
         Task task = new Task("4", "4", TaskStatus.NEW,30);
         tm.createTask(task);
+        Task optTask = tm.getTaskById(task.getId()).orElse(null);
         assertEquals(tm.getTasks().size(), 1);
-        assertNotNull(tm.getTaskById(task.getId()));
-        assertEquals(tm.getTaskById(task.getId()).getName(), "4");
+        assertNotNull(optTask);
+        assertEquals(optTask.getName(), "4");
     }
 }
