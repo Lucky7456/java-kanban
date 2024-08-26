@@ -5,6 +5,7 @@ import model.EpicTask;
 import model.SubTask;
 import model.Task;
 import model.enums.TaskStatus;
+import model.enums.TaskType;
 import service.exceptions.ManagerLoadException;
 import service.exceptions.ManagerSaveException;
 import service.interfaces.HistoryManager;
@@ -41,8 +42,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String[] taskLines = data.split("\n");
         for (String taskLine : taskLines) {
             String[] taskData = taskLine.split(",");
-            String taskType = taskData[1];
-            if (taskType.equals("type")) continue;
+            if (taskData[1].equals("type")) continue;
+            TaskType taskType = TaskType.valueOf(taskData[1]);
             String name = taskData[2];
             String description = taskData[4];
             int id = Integer.parseInt(taskData[0]);
@@ -55,7 +56,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     : null;
 
             switch (taskType) {
-                case "TASK":
+                case TaskType.Task:
                     Task task = new Task(
                             name,
                             description,
@@ -66,7 +67,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     );
                     tm.createTask(task);
                     break;
-                case "EPIC":
+                case TaskType.EpicTask:
                     EpicTask epicTask = new EpicTask(
                             name,
                             description,
@@ -74,7 +75,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     );
                     tm.createEpicTask(epicTask);
                     break;
-                case "SUBTASK":
+                case TaskType.SubTask:
                     SubTask subTask = new SubTask(
                             name,
                             description,

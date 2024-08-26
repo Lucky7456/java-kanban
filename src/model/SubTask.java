@@ -1,6 +1,7 @@
 package model;
 
 import model.enums.TaskStatus;
+import model.enums.TaskType;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -44,7 +45,7 @@ public class SubTask extends Task {
     public String toString() {
         return String.format("%s,%s,%s,%s,%s,%s,%s,%s",
                 getId(),
-                "SUBTASK",
+                TaskType.SubTask,
                 getName(),
                 getStatus(),
                 getDescription(),

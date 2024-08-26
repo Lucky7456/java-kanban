@@ -1,6 +1,7 @@
 package model;
 
 import model.enums.TaskStatus;
+import model.enums.TaskType;
 
 import java.time.ZoneId;
 import java.time.Duration;
@@ -101,7 +102,7 @@ public class EpicTask extends Task {
     public String toString() {
         return String.format("%s,%s,%s,%s,%s,0,%s,%s",
                 getId(),
-                "EPIC",
+                TaskType.SubTask,
                 getName(),
                 getStatus(),
                 getDescription(),

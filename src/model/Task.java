@@ -1,6 +1,7 @@
 package model;
 
 import model.enums.TaskStatus;
+import model.enums.TaskType;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -88,7 +89,7 @@ public class Task {
     public String toString() {
         return String.format("%s,%s,%s,%s,%s,0,%s,%s",
                     getId(),
-                    "TASK",
+                    TaskType.Task,
                     getName(),
                     getStatus(),
                     getDescription(),
