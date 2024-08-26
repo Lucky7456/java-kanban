@@ -13,9 +13,9 @@ public class Task {
     private final String name;
     private final String description;
     private final int id;
-    private final TaskStatus status;
-    private final Duration duration;
-    private final LocalDateTime startTime;
+    private TaskStatus status;
+    private Duration duration;
+    private LocalDateTime startTime;
 
     public Task(String name, String description, int id, TaskStatus status, long duration, LocalDateTime startTime) {
         this.name = name;
@@ -48,8 +48,16 @@ public class Task {
         return duration;
     }
 
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
     public LocalDateTime getStartTime() {
         return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
     public LocalDateTime getEndTime() {
@@ -77,6 +85,10 @@ public class Task {
         return status;
     }
 
+    public void setStatus(TaskStatus status) {
+        this.status = status;
+    }
+
     public String getName() {
         return name;
     }
@@ -88,15 +100,15 @@ public class Task {
     @Override
     public String toString() {
         return String.format("%s,%s,%s,%s,%s,0,%s,%s",
-                    getId(),
-                    TaskType.Task,
-                    getName(),
-                    getStatus(),
-                    getDescription(),
-                    getDuration().toMinutes(),
-                    getStartTime() != null ?
-                            getStartTime().atZone(ZoneId.systemDefault()).toEpochSecond()
-                            : null
-                );
+                getId(),
+                TaskType.Task,
+                getName(),
+                getStatus(),
+                getDescription(),
+                getDuration().toMinutes(),
+                getStartTime() != null ?
+                        getStartTime().atZone(ZoneId.systemDefault()).toEpochSecond()
+                        : null
+        );
     }
 }

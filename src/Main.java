@@ -43,10 +43,10 @@ public class Main {
         et1.addSubTask(st2);
         et1.addSubTask(st3);
 
+        tm.createEpicTask(et1);
         tm.createSubTask(st1);
         tm.createSubTask(st2);
         tm.createSubTask(st3);
-        tm.createEpicTask(et1);
 
         EpicTask et2 = new EpicTask("second epic", "empty epic");
 

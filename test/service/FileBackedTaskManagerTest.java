@@ -39,8 +39,8 @@ public class FileBackedTaskManagerTest {
         SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.NEW, et1.getId(), 30);
         et1.addSubTask(st1);
 
-        tm.createSubTask(st1);
         tm.createEpicTask(et1);
+        tm.createSubTask(st1);
     }
 
     @Test
