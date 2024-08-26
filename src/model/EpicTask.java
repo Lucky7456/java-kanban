@@ -102,7 +102,7 @@ public class EpicTask extends Task {
     public String toString() {
         return String.format("%s,%s,%s,%s,%s,0,%s,%s",
                 getId(),
-                TaskType.SubTask,
+                TaskType.EpicTask,
                 getName(),
                 getStatus(),
                 getDescription(),
