@@ -225,49 +225,43 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void refreshEpic(EpicTask et) {
-        et.setStatus(getEpicStatus(et));
-        et.setDuration(getEpicDuration(et));
-        et.setStartTime(getEpicStartTime(et));
-        et.setEndTime(getEpicEndTime(et));
-    }
-
-    private TaskStatus getEpicStatus(EpicTask et) {
-        if (et.getSubTaskIds().isEmpty()) return TaskStatus.NEW;
-
-        int calculatedStatus = getSubTasks(et).stream()
-                .map(subTask -> subTask.getStatus().ordinal())
-                .reduce(0, (total, status) -> total | BIT << status);
-
-        if (calculatedStatus == BIT_MASK_NEW) {
-            return TaskStatus.NEW;
-        } else if (calculatedStatus == BIT_MASK_DONE) {
-            return TaskStatus.DONE;
-        } else {
-            return TaskStatus.IN_PROGRESS;
+        List<SubTask> subs = getSubTasks(et);
+        if (subs.isEmpty()) {
+            et.setStatus(TaskStatus.NEW);
+            return;
         }
-    }
 
-    private Duration getEpicDuration(EpicTask et) {
-        return Duration.ofMinutes(getSubTasks(et).stream()
-                .filter(subTask -> subTask.getStartTime() != null)
-                .mapToLong(subTask -> subTask.getDuration().toMinutes())
-                .sum()
-        );
-    }
+        LocalDateTime startTime = LocalDateTime.MAX;
+        LocalDateTime endTime = LocalDateTime.MIN;
+        long duration = 0;
+        int byteStatus = 0;
 
-    public LocalDateTime getEpicStartTime(EpicTask et) {
-        return getSubTasks(et).stream()
-                .map(Task::getStartTime)
-                .filter(Objects::nonNull)
-                .min(LocalDateTime::compareTo)
-                .orElse(null);
-    }
+        for (SubTask st : subs) {
+            byteStatus |= BIT << st.getStatus().ordinal();
 
-    public LocalDateTime getEpicEndTime(EpicTask et) {
-        return getSubTasks(et).stream()
-                .map(Task::getEndTime)
-                .filter(Objects::nonNull)
-                .max(LocalDateTime::compareTo)
-                .orElse(null);
+            if (st.getStartTime() == null) continue;
+
+            duration += st.getDuration().toMinutes();
+
+            if (st.getStartTime().isBefore(startTime)) {
+                startTime = st.getStartTime();
+            }
+
+            if (st.getEndTime().isAfter(endTime)) {
+                endTime = st.getEndTime();
+            }
+        }
+
+        if (byteStatus == BIT_MASK_NEW) {
+            et.setStatus(TaskStatus.NEW);
+        } else if (byteStatus == BIT_MASK_DONE) {
+            et.setStatus(TaskStatus.DONE);
+        } else {
+            et.setStatus(TaskStatus.IN_PROGRESS);
+        }
+
+        et.setDuration(Duration.ofMinutes(duration));
+        if (!startTime.equals(LocalDateTime.MAX)) et.setStartTime(startTime);
+        if (!startTime.equals(LocalDateTime.MIN)) et.setEndTime(endTime);
     }
 }

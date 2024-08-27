@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
+    private static final String CSV_HEADER = "id,type,name,status,description,epic,duration,startTime\n";
     private final File saveFile;
 
     public FileBackedTaskManager(HistoryManager historyManager, File saveFile) {
@@ -103,7 +104,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private String saveTasksToString() {
-        StringBuilder data = new StringBuilder("id,type,name,status,description,epic,duration,startTime\n");
+        StringBuilder data = new StringBuilder(CSV_HEADER);
         getAllTasks().forEach(task -> data.append(task.toString()).append("\n"));
         return data.toString();
     }
