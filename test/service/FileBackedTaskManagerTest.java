@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileBackedTaskManagerTest {
     private TaskManager tm;
@@ -28,19 +29,18 @@ public class FileBackedTaskManagerTest {
             throw new RuntimeException(e);
         }
 
-        Task t1 = new Task("first", "to do", TaskStatus.NEW);
-        Task t2 = new Task("second", "to do", TaskStatus.NEW);
+        Task t1 = new Task("first", "to do", TaskStatus.NEW, 30);
+        Task t2 = new Task("second", "to do", TaskStatus.NEW, 30);
 
         tm.createTask(t1);
         tm.createTask(t2);
 
-        SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.NEW);
         EpicTask et1 = new EpicTask("first epic", "epic with 1 sub");
-        st1.setEpicTask(et1);
+        SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.NEW, et1.getId(), 30);
         et1.addSubTask(st1);
 
-        tm.createSubTask(st1);
         tm.createEpicTask(et1);
+        tm.createSubTask(st1);
     }
 
     @Test
@@ -56,6 +56,18 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
+    void testSaveFileException() {
+        assertDoesNotThrow(() -> tm.removeAllTasks(), "saving file should not throw exception");
+    }
+
+    @Test
+    void testLoadFileException() {
+        assertDoesNotThrow(() -> {
+            FileBackedTaskManager.loadFromFile(file);
+        }, "loading file should not throw exception");
+    }
+
+    @Test
     void shouldSaveTasksToFile() {
         String load;
         try {
@@ -64,16 +76,8 @@ public class FileBackedTaskManagerTest {
             throw new RuntimeException(e);
         }
 
-        StringBuilder save = new StringBuilder("id,type,name,status,description,epic\n");
-        for (Task task : tm.getTasks()) {
-            save.append(task.toString()).append("\n");
-        }
-        for (EpicTask epicTask : tm.getEpicTasks()) {
-            save.append(epicTask.toString()).append("\n");
-        }
-        for (SubTask subTask : tm.getSubTasks()) {
-            save.append(subTask.toString()).append("\n");
-        }
+        StringBuilder save = new StringBuilder("id,type,name,status,description,epic,duration,startTime\n");
+        tm.getAllTasks().forEach(task -> save.append(task.toString()).append("\n"));
 
         assertEquals(save.toString(), load, "should save tasks to file");
     }
@@ -83,8 +87,9 @@ public class FileBackedTaskManagerTest {
         SubTask subTask = tm.getSubTasks().getFirst();
 
         TaskManager taskManager = FileBackedTaskManager.loadFromFile(file);
-
-        assertEquals(taskManager.getSubTaskById(subTask.getId()).getEpicTask(), subTask.getEpicTask(), "sub tasks should have equal epic tasks");
+        SubTask optSt = taskManager.getSubTaskById(subTask.getId()).orElse(null);
+        assertNotNull(optSt);
+        assertEquals(optSt.getEpicTaskId(), subTask.getEpicTaskId(), "sub tasks should have equal epic tasks");
         assertEquals(taskManager.getTasks().size(), tm.getTasks().size(), "task list sizes should be equal");
         assertEquals(taskManager.getSubTasks().size(), tm.getSubTasks().size(), "sub task list sizes should be equal");
         assertEquals(taskManager.getEpicTasks().size(), tm.getEpicTasks().size(), "task list sizes should be equal");

@@ -8,6 +8,7 @@ import service.interfaces.TaskManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class Main {
 
@@ -16,33 +17,36 @@ public class Main {
 
         File file;
         try {
-            file = File.createTempFile("data",".txt");
+            file = File.createTempFile("data", ".txt");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
+        LocalDateTime taskStart1 = LocalDateTime.now().plusDays(1);
+        LocalDateTime taskStart2 = taskStart1.plusMinutes(50);
+        LocalDateTime taskStart3 = taskStart1.plusMinutes(20);
+        LocalDateTime taskStart4 = taskStart2.plusMinutes(30);
+        LocalDateTime taskStart5 = taskStart2.plusMinutes(30);
+
         TaskManager tm = Managers.getDefault(file);
-        Task t1 = new Task("first", "to do", TaskStatus.NEW);
-        Task t2 = new Task("second", "to do", TaskStatus.NEW);
+        Task t1 = new Task("first", "to do", TaskStatus.NEW, 30, taskStart1);
+        Task t2 = new Task("second", "to do", TaskStatus.NEW, 30, taskStart2);
 
         tm.createTask(t1);
         tm.createTask(t2);
 
-        SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.NEW);
-        SubTask st2 = new SubTask("second st", "sub 2", TaskStatus.NEW);
-        SubTask st3 = new SubTask("third st", "sub 3", TaskStatus.NEW);
         EpicTask et1 = new EpicTask("first epic", "epic with 3 subs");
-        st1.setEpicTask(et1);
-        st2.setEpicTask(et1);
-        st3.setEpicTask(et1);
+        SubTask st1 = new SubTask("first st", "sub 1", TaskStatus.IN_PROGRESS, et1.getId(), 30, taskStart3);
+        SubTask st2 = new SubTask("second st", "sub 2", TaskStatus.DONE, et1.getId(), 30, taskStart4);
+        SubTask st3 = new SubTask("third st", "sub 3", TaskStatus.IN_PROGRESS, et1.getId(), 30, taskStart5);
         et1.addSubTask(st1);
         et1.addSubTask(st2);
         et1.addSubTask(st3);
 
+        tm.createEpicTask(et1);
         tm.createSubTask(st1);
         tm.createSubTask(st2);
         tm.createSubTask(st3);
-        tm.createEpicTask(et1);
 
         EpicTask et2 = new EpicTask("second epic", "empty epic");
 
@@ -97,29 +101,24 @@ public class Main {
 
     private static void printAllTasks(TaskManager manager) {
         System.out.println("Задачи:");
-        for (Task task : manager.getTasks()) {
-            System.out.println(task);
-        }
-        System.out.println("Эпики:");
-        for (EpicTask epic : manager.getEpicTasks()) {
-            System.out.println(epic);
+        manager.getTasks().forEach(System.out::println);
 
-            for (Task task : manager.getSubTasks(epic)) {
-                System.out.println("--> " + task);
-            }
-        }
+        System.out.println("Эпики:");
+        manager.getEpicTasks().forEach(epic -> {
+            System.out.println(epic);
+            manager.getSubTasks(epic).forEach(task -> System.out.println("--> " + task));
+        });
         System.out.println("Подзадачи:");
-        for (Task subtask : manager.getSubTasks()) {
-            System.out.println(subtask);
-        }
+        manager.getSubTasks().forEach(System.out::println);
+
+        System.out.println("приоритетные задачи:");
+        manager.getPrioritizedTasks().forEach(System.out::println);
 
         printHistory(manager);
     }
 
     private static void printHistory(TaskManager manager) {
         System.out.println("История:");
-        for (Task task : manager.getHistory()) {
-            System.out.println(task);
-        }
+        manager.getHistory().forEach(System.out::println);
     }
 }

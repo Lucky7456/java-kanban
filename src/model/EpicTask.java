@@ -1,73 +1,66 @@
 package model;
 
 import model.enums.TaskStatus;
+import model.enums.TaskType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.time.ZoneId;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class EpicTask extends Task {
-
-    public static final int BIT = 1;
-    public static final int BIT_MASK_DONE = BIT << TaskStatus.DONE.ordinal();
-    public static final int BIT_MASK_NEW = BIT << TaskStatus.NEW.ordinal();
-
-    public ArrayList<SubTask> getSubTasks() {
-        return new ArrayList<>(subTasks.values());
-    }
-
-    private final HashMap<Integer, SubTask> subTasks;
+    private final HashSet<Integer> subTaskIds;
+    private LocalDateTime endTime;
 
     public EpicTask(String name,
                     String description,
                     int id) {
-        super(name, description, id, TaskStatus.NEW);
-        this.subTasks = new HashMap<>();
+        super(name, description, id, TaskStatus.NEW, 0, null);
+        this.subTaskIds = new HashSet<>();
     }
 
     public EpicTask(String name,
-                    String description
-    ) {
-        super(name, description, TaskStatus.NEW);
-        this.subTasks = new HashMap<>();
+                    String description) {
+        super(name, description, TaskStatus.NEW, 0);
+        this.subTaskIds = new HashSet<>();
+    }
+
+    public List<Integer> getSubTaskIds() {
+        return new ArrayList<>(subTaskIds);
     }
 
     public void addSubTask(SubTask st) {
-        subTasks.put(st.getId(), st);
-    }
-
-    public void replaceSubTask(SubTask st) {
-        subTasks.put(st.getId(), st);
+        subTaskIds.add(st.getId());
     }
 
     public void removeSubTask(SubTask st) {
-        subTasks.remove(st.getId());
+        subTaskIds.remove(st.getId());
     }
 
     public void removeAllSubTasks() {
-        subTasks.clear();
+        subTaskIds.clear();
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     @Override
-    public TaskStatus getStatus() {
-        if (subTasks.isEmpty()) return TaskStatus.NEW;
-
-        int status = 0;
-
-        for (SubTask st : subTasks.values()) {
-            status |= BIT << st.getStatus().ordinal();
-        }
-
-        if (status == BIT_MASK_NEW) {
-            return TaskStatus.NEW;
-        } else if (status == BIT_MASK_DONE) {
-            return TaskStatus.DONE;
-        } else {
-            return TaskStatus.IN_PROGRESS;
-        }
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
     @Override
     public String toString() {
-        return String.format("%s,%s,%s,%s,%s,", getId(), "EPIC", getName(), getStatus(), getDescription());
+        return String.format("%s,%s,%s,%s,%s,0,%s,%s",
+                getId(),
+                TaskType.EpicTask,
+                getName(),
+                getStatus(),
+                getDescription(),
+                getDuration().toMinutes(),
+                getStartTime() != null ?
+                        getStartTime().atZone(ZoneId.systemDefault()).toEpochSecond()
+                        : null
+        );
     }
 }

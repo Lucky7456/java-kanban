@@ -1,7 +1,11 @@
 package model;
 
 import model.enums.TaskStatus;
+import model.enums.TaskType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Objects;
 
 public class Task {
@@ -9,20 +13,55 @@ public class Task {
     private final String name;
     private final String description;
     private final int id;
-    private final TaskStatus status;
+    private TaskStatus status;
+    private Duration duration;
+    private LocalDateTime startTime;
 
-    public Task(String name, String description, int id, TaskStatus status) {
+    public Task(String name, String description, int id, TaskStatus status, long duration, LocalDateTime startTime) {
         this.name = name;
         this.description = description;
         this.id = id;
         this.status = status;
+        this.duration = Duration.ofMinutes(duration);
+        this.startTime = startTime;
     }
 
-    public Task(String name, String description, TaskStatus status) {
+    public Task(String name, String description, TaskStatus status, long duration, LocalDateTime startTime) {
         this.name = name;
         this.description = description;
+        this.duration = Duration.ofMinutes(duration);
+        this.startTime = startTime;
         this.id = uniqueIdCounter++;
         this.status = status;
+    }
+
+    public Task(String name, String description, TaskStatus status, long duration) {
+        this.name = name;
+        this.description = description;
+        this.duration = Duration.ofMinutes(duration);
+        this.id = uniqueIdCounter++;
+        this.status = status;
+        startTime = null;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime != null ? startTime.plus(duration) : null;
     }
 
     @Override
@@ -46,6 +85,10 @@ public class Task {
         return status;
     }
 
+    public void setStatus(TaskStatus status) {
+        this.status = status;
+    }
+
     public String getName() {
         return name;
     }
@@ -56,6 +99,16 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("%s,%s,%s,%s,%s,", getId(), "TASK", getName(), getStatus(), getDescription());
+        return String.format("%s,%s,%s,%s,%s,0,%s,%s",
+                getId(),
+                TaskType.Task,
+                getName(),
+                getStatus(),
+                getDescription(),
+                getDuration().toMinutes(),
+                getStartTime() != null ?
+                        getStartTime().atZone(ZoneId.systemDefault()).toEpochSecond()
+                        : null
+        );
     }
 }

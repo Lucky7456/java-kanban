@@ -5,6 +5,7 @@ import model.EpicTask;
 import model.SubTask;
 import model.Task;
 import model.enums.TaskStatus;
+import model.enums.TaskType;
 import service.exceptions.ManagerLoadException;
 import service.exceptions.ManagerSaveException;
 import service.interfaces.HistoryManager;
@@ -15,8 +16,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
+    private static final String CSV_HEADER = "id,type,name,status,description,epic,duration,startTime\n";
     private final File saveFile;
 
     public FileBackedTaskManager(HistoryManager historyManager, File saveFile) {
@@ -38,37 +43,53 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String[] taskLines = data.split("\n");
         for (String taskLine : taskLines) {
             String[] taskData = taskLine.split(",");
-            switch (taskData[1]) {
-                case "TASK":
+            if (taskData[1].equals("type")) continue;
+            TaskType taskType = TaskType.valueOf(taskData[1]);
+            String name = taskData[2];
+            String description = taskData[4];
+            int id = Integer.parseInt(taskData[0]);
+            TaskStatus status = TaskStatus.valueOf(taskData[3]);
+            int epicId = Integer.parseInt(taskData[5]);
+            long duration = Long.parseLong(taskData[6]);
+            boolean hasStartTime = !taskData[7].equals("null");
+            LocalDateTime startTime = hasStartTime ?
+                    LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(taskData[7])), ZoneId.systemDefault())
+                    : null;
+
+            switch (taskType) {
+                case TaskType.Task:
                     Task task = new Task(
-                            taskData[2],
-                            taskData[4],
-                            Integer.parseInt(taskData[0]),
-                            TaskStatus.valueOf(taskData[3])
+                            name,
+                            description,
+                            id,
+                            status,
+                            duration,
+                            startTime
                     );
                     tm.createTask(task);
                     break;
-                case "EPIC":
+                case TaskType.EpicTask:
                     EpicTask epicTask = new EpicTask(
-                            taskData[2],
-                            taskData[4],
-                            Integer.parseInt(taskData[0])
+                            name,
+                            description,
+                            id
                     );
                     tm.createEpicTask(epicTask);
                     break;
-                case "SUBTASK":
+                case TaskType.SubTask:
+                    EpicTask et = tm.getEpicTaskById(epicId).orElse(null);
+                    if (et == null) throw new ManagerLoadException();
                     SubTask subTask = new SubTask(
-                            taskData[2],
-                            taskData[4],
-                            Integer.parseInt(taskData[0]),
-                            TaskStatus.valueOf(taskData[3])
+                            name,
+                            description,
+                            id,
+                            status,
+                            et.getId(),
+                            duration,
+                            startTime
                     );
-                    EpicTask et = tm.getEpicTaskById(Integer.parseInt(taskData[5]));
                     et.addSubTask(subTask);
-                    subTask.setEpicTask(et);
                     tm.createSubTask(subTask);
-                    break;
-                case "type":
                     break;
             }
         }
@@ -83,10 +104,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private String saveTasksToString() {
-        StringBuilder data = new StringBuilder("id,type,name,status,description,epic\n");
-        for (Task task : getAllTasks()) {
-            data.append(task.toString()).append("\n");
-        }
+        StringBuilder data = new StringBuilder(CSV_HEADER);
+        getAllTasks().forEach(task -> data.append(task.toString()).append("\n"));
         return data.toString();
     }
 
