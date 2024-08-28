@@ -77,18 +77,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     tm.createEpicTask(epicTask);
                     break;
                 case TaskType.SubTask:
-                    EpicTask et = tm.getEpicTaskById(epicId).orElse(null);
-                    if (et == null) throw new ManagerLoadException();
                     SubTask subTask = new SubTask(
                             name,
                             description,
                             id,
                             status,
-                            et.getId(),
+                            epicId,
                             duration,
                             startTime
                     );
-                    et.addSubTask(subTask);
+                    tm.getEpicTaskById(epicId).addSubTask(subTask);
                     tm.createSubTask(subTask);
                     break;
             }
@@ -146,21 +144,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void removeTaskById(int id) {
+    public Task removeTaskById(int id) {
         super.removeTaskById(id);
         save();
+        return null;
     }
 
     @Override
-    public void removeSubTaskById(int id) {
+    public SubTask removeSubTaskById(int id) {
         super.removeSubTaskById(id);
         save();
+        return null;
     }
 
     @Override
-    public void removeEpicTaskById(int id) {
+    public EpicTask removeEpicTaskById(int id) {
         super.removeEpicTaskById(id);
         save();
+        return null;
     }
 
     @Override
