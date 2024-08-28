@@ -145,23 +145,23 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public Task removeTaskById(int id) {
-        super.removeTaskById(id);
+        Task t = super.removeTaskById(id);
         save();
-        return null;
+        return t;
     }
 
     @Override
     public SubTask removeSubTaskById(int id) {
-        super.removeSubTaskById(id);
+        SubTask t = super.removeSubTaskById(id);
         save();
-        return null;
+        return t;
     }
 
     @Override
     public EpicTask removeEpicTaskById(int id) {
-        super.removeEpicTaskById(id);
+        EpicTask t = super.removeEpicTaskById(id);
         save();
-        return null;
+        return t;
     }
 
     @Override
