@@ -87,7 +87,7 @@ public class FileBackedTaskManagerTest {
         SubTask subTask = tm.getSubTasks().getFirst();
 
         TaskManager taskManager = FileBackedTaskManager.loadFromFile(file);
-        SubTask optSt = taskManager.getSubTaskById(subTask.getId()).orElse(null);
+        SubTask optSt = taskManager.getSubTaskById(subTask.getId());
         assertNotNull(optSt);
         assertEquals(optSt.getEpicTaskId(), subTask.getEpicTaskId(), "sub tasks should have equal epic tasks");
         assertEquals(taskManager.getTasks().size(), tm.getTasks().size(), "task list sizes should be equal");

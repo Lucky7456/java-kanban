@@ -18,15 +18,14 @@ public class HttpTaskServer {
 
     private final HttpServer server;
 
-    public HttpTaskServer() throws IOException {
-        TaskManager taskManager = Managers.getInmemoryTaskManager();
+    public HttpTaskServer(TaskManager tm) throws IOException {
         Gson gson = Managers.getGson();
         server = HttpServer.create(new InetSocketAddress(PORT), 0);
-        server.createContext("/tasks", new TaskProcessor(taskManager, gson));
-        server.createContext("/subtasks", new SubTaskProcessor(taskManager, gson));
-        server.createContext("/epics", new EpicProcessor(taskManager, gson));
-        server.createContext("/history", new GetHistoryHandler("^/historyGET$", taskManager, gson));
-        server.createContext("/prioritized", new GetPrioritizedHandler("^/prioritizedGET$", taskManager, gson));
+        server.createContext("/tasks", new TaskProcessor(tm, gson));
+        server.createContext("/subtasks", new SubTaskProcessor(tm, gson));
+        server.createContext("/epics", new EpicProcessor(tm, gson));
+        server.createContext("/history", new GetHistoryHandler("^/historyGET$", tm, gson));
+        server.createContext("/prioritized", new GetPrioritizedHandler("^/prioritizedGET$", tm, gson));
     }
 
     public void start() {
@@ -40,7 +39,7 @@ public class HttpTaskServer {
     }
 
     public static void main(String[] args) throws IOException {
-        HttpTaskServer taskServer = new HttpTaskServer();
+        HttpTaskServer taskServer = new HttpTaskServer(Managers.getInmemoryTaskManager());
         taskServer.start();
     }
 }

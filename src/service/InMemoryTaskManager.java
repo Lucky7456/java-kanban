@@ -37,11 +37,27 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void updatePrioritizedTask(Task previousTask, Task newTask) {
+        if (newTask.getStartTime() == null) {
+            if (previousTask.getStartTime() != null) {
+                timeMapper.remove(previousTask);
+                priorityTasks.remove(previousTask);
+            }
+            return;
+        }
+
+        if (previousTask.getStartTime() == null) {
+            if (timeMapper.hasCollision(newTask)) throw new IntersectionException();
+            timeMapper.add(newTask);
+            priorityTasks.add(newTask);
+            return;
+        }
+
         timeMapper.remove(previousTask);
         if (timeMapper.hasCollision(newTask)) {
             timeMapper.add(previousTask);
             throw new IntersectionException();
         }
+
         timeMapper.add(newTask);
         priorityTasks.add(newTask);
     }
@@ -193,7 +209,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateEpicTask(EpicTask et) {
         EpicTask previousTask = epicTasks.get(et.getId());
-        if (previousTask == null) throw new NotFoundException("subtask not found");
+        if (previousTask == null) throw new NotFoundException("epic task not found");
 
         subTasks.values().stream()
                 .filter(st -> epicTasks.get(st.getEpicTaskId()).equals(et))

@@ -23,13 +23,12 @@ public class Managers {
         return new InMemoryHistoryManager();
     }
 
-    public static TaskManager getInmemoryTaskManager(){
+    public static TaskManager getInmemoryTaskManager() {
         return new InMemoryTaskManager(getDefaultHistory());
     }
 
     public static Gson getGson() {
         return new GsonBuilder()
-                .serializeNulls()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .registerTypeAdapter(Duration.class, new DurationAdapter())
                 .create();

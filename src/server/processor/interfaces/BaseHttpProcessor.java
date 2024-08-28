@@ -33,7 +33,7 @@ public abstract class BaseHttpProcessor implements HttpHandler {
         } catch (NotFoundException e) {
             sendError(httpExchange, e.getMessage(), 404);
         } catch (Exception e) {
-            sendError(httpExchange, "Internal Server Error", 500);
+            sendError(httpExchange, e.getMessage(), 500);
         }
     }
 

@@ -37,7 +37,7 @@ public abstract class BaseCommandHandler implements HttpHandler {
         } catch (NotFoundException e) {
             sendNotFound(exchange, e.getMessage());
         } catch (Exception e) {
-            sendResponse(exchange, "Internal Server Error", 500);
+            sendResponse(exchange, e.getMessage(), 500);
         }
     }
 
