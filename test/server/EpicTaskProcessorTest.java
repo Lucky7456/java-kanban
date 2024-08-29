@@ -52,8 +52,7 @@ public class EpicTaskProcessorTest extends BaseProcessorTest {
         HttpResponse<String> response = getResponse("http://localhost:8080/epics/0");
         assertEquals(200, response.statusCode());
 
-        Type epictaskType = new TypeToken<EpicTask>() {}.getType();
-        EpicTask epictaskFromJson = gson.fromJson(response.body(), epictaskType);
+        EpicTask epictaskFromJson = gson.fromJson(response.body(), EpicTask.class);
 
         assertNotNull(epictaskFromJson, "Задачи не возвращаются");
         assertEquals("e", epictaskFromJson.getName(), "Некорректное имя задачи");

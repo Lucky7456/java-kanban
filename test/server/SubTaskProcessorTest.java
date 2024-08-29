@@ -54,8 +54,7 @@ public class SubTaskProcessorTest extends BaseProcessorTest {
         HttpResponse<String> response = getResponse("http://localhost:8080/subtasks/0");
         assertEquals(200, response.statusCode());
 
-        Type subtaskType = new TypeToken<SubTask>() {}.getType();
-        SubTask subtaskFromJson = gson.fromJson(response.body(), subtaskType);
+        SubTask subtaskFromJson = gson.fromJson(response.body(), SubTask.class);
 
         assertNotNull(subtaskFromJson, "Задачи не возвращаются");
         assertEquals("s", subtaskFromJson.getName(), "Некорректное имя задачи");

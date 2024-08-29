@@ -54,8 +54,7 @@ public class TaskProcessorTest extends BaseProcessorTest {
         HttpResponse<String> response = getResponse("http://localhost:8080/tasks/0");
         assertEquals(200, response.statusCode());
 
-        Type taskType = new TypeToken<Task>() {}.getType();
-        Task taskFromJson = gson.fromJson(response.body(), taskType);
+        Task taskFromJson = gson.fromJson(response.body(), Task.class);
 
         assertNotNull(taskFromJson, "Задачи не возвращаются");
         assertEquals("t", taskFromJson.getName(), "Некорректное имя задачи");
