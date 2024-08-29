@@ -3,6 +3,10 @@ package server.processor.handler.interfaces;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import config.Managers;
+import model.EpicTask;
+import model.SubTask;
+import model.Task;
 import service.exceptions.IntersectionException;
 import service.exceptions.NotFoundException;
 import service.interfaces.TaskManager;
@@ -14,12 +18,12 @@ import java.util.regex.Pattern;
 public abstract class BaseCommandHandler implements HttpHandler {
     private final String endpoint;
     protected final TaskManager tm;
-    protected final Gson gson;
+    private final Gson gson;
 
-    public BaseCommandHandler(String endpoint, TaskManager tm, Gson gson) {
+    public BaseCommandHandler(String endpoint, TaskManager tm) {
         this.endpoint = endpoint;
         this.tm = tm;
-        this.gson = gson;
+        gson = Managers.getGson();
     }
 
     public boolean canHandle(HttpExchange h) {
@@ -52,13 +56,24 @@ public abstract class BaseCommandHandler implements HttpHandler {
         }
     }
 
+    protected Task taskFromJson(HttpExchange h) throws IOException {
+        return gson.fromJson(readText(h), Task.class);
+    }
+
+    protected SubTask subTaskFromJson(HttpExchange h) throws IOException {
+        return gson.fromJson(readText(h), SubTask.class);
+    }
+
+    protected EpicTask epicFromJson(HttpExchange h) throws IOException {
+        return gson.fromJson(readText(h), EpicTask.class);
+    }
+
     protected String readText(HttpExchange h) throws IOException {
         return new String(h.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
     }
 
     protected void sendJson(HttpExchange h, Object src) throws IOException {
-        String response = gson.toJson(src);
-        sendText(h, response);
+        sendText(h, gson.toJson(src));
     }
 
     protected void sendText(HttpExchange h, String text) throws IOException {

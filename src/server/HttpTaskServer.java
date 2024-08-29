@@ -1,6 +1,5 @@
 package server;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpServer;
 import config.Managers;
 import server.processor.EpicProcessor;
@@ -19,13 +18,12 @@ public class HttpTaskServer {
     private final HttpServer server;
 
     public HttpTaskServer(TaskManager tm) throws IOException {
-        Gson gson = Managers.getGson();
         server = HttpServer.create(new InetSocketAddress(PORT), 0);
-        server.createContext("/tasks", new TaskProcessor(tm, gson));
-        server.createContext("/subtasks", new SubTaskProcessor(tm, gson));
-        server.createContext("/epics", new EpicProcessor(tm, gson));
-        server.createContext("/history", new GetHistoryHandler("^/historyGET$", tm, gson));
-        server.createContext("/prioritized", new GetPrioritizedHandler("^/prioritizedGET$", tm, gson));
+        server.createContext("/tasks", new TaskProcessor(tm));
+        server.createContext("/subtasks", new SubTaskProcessor(tm));
+        server.createContext("/epics", new EpicProcessor(tm));
+        server.createContext("/history", new GetHistoryHandler("^/historyGET$", tm));
+        server.createContext("/prioritized", new GetPrioritizedHandler("^/prioritizedGET$", tm));
     }
 
     public void start() {

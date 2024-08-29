@@ -1,6 +1,5 @@
 package server.processor;
 
-import com.google.gson.Gson;
 import server.processor.handler.*;
 import server.processor.interfaces.BaseHttpProcessor;
 import service.interfaces.TaskManager;
@@ -8,18 +7,18 @@ import service.interfaces.TaskManager;
 import java.util.Arrays;
 
 public class TaskProcessor extends BaseHttpProcessor {
-    public TaskProcessor(TaskManager tm, Gson gson) {
-        super(tm, gson);
+    public TaskProcessor(TaskManager tm) {
+        super(tm);
     }
 
     @Override
-    public void setCommands(TaskManager tm, Gson gson) {
+    public void setCommands(TaskManager tm) {
         handlers = Arrays.asList(
-                new GetTasksHandler("^/tasksGET$", tm, gson),
-                new GetTaskByIdHandler("^/tasks/\\d+GET$", tm, gson),
-                new CreateTaskHandler("^/tasksPOST$", tm, gson),
-                new UpdateTaskHandler("^/tasks/\\d+POST$", tm, gson),
-                new DeleteTaskHandler("^/tasks/\\d+DELETE$", tm, gson)
+                new GetTasksHandler("^/tasksGET$", tm),
+                new GetTaskByIdHandler("^/tasks/\\d+GET$", tm),
+                new CreateTaskHandler("^/tasksPOST$", tm),
+                new UpdateTaskHandler("^/tasks/\\d+POST$", tm),
+                new DeleteTaskHandler("^/tasks/\\d+DELETE$", tm)
         );
     }
 }

@@ -1,6 +1,5 @@
 package server.processor.interfaces;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import server.processor.handler.interfaces.BaseCommandHandler;
@@ -14,11 +13,11 @@ import java.util.List;
 public abstract class BaseHttpProcessor implements HttpHandler {
     protected List<BaseCommandHandler> handlers;
 
-    public BaseHttpProcessor(TaskManager tm, Gson gson) {
-        setCommands(tm, gson);
+    public BaseHttpProcessor(TaskManager tm) {
+        setCommands(tm);
     }
 
-    public abstract void setCommands(TaskManager tm, Gson gson);
+    public abstract void setCommands(TaskManager tm);
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
