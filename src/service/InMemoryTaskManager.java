@@ -305,6 +305,6 @@ public class InMemoryTaskManager implements TaskManager {
 
         et.setDuration(Duration.ofMinutes(duration));
         if (!startTime.equals(LocalDateTime.MAX)) et.setStartTime(startTime);
-        if (!startTime.equals(LocalDateTime.MIN)) et.setEndTime(endTime);
+        if (!endTime.equals(LocalDateTime.MIN)) et.setEndTime(endTime);
     }
 }
