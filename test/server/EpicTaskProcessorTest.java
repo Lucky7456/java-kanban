@@ -3,7 +3,6 @@ package server;
 import com.google.gson.reflect.TypeToken;
 import model.EpicTask;
 import model.SubTask;
-import model.Task;
 import org.junit.jupiter.api.Test;
 import server.interfaces.BaseProcessorTest;
 
@@ -53,8 +52,8 @@ public class EpicTaskProcessorTest extends BaseProcessorTest {
         HttpResponse<String> response = getResponse("http://localhost:8080/epics/0");
         assertEquals(200, response.statusCode());
 
-        Type epictaskType = new TypeToken<SubTask>() {}.getType();
-        Task epictaskFromJson = gson.fromJson(response.body(), epictaskType);
+        Type epictaskType = new TypeToken<EpicTask>() {}.getType();
+        EpicTask epictaskFromJson = gson.fromJson(response.body(), epictaskType);
 
         assertNotNull(epictaskFromJson, "Задачи не возвращаются");
         assertEquals("e", epictaskFromJson.getName(), "Некорректное имя задачи");

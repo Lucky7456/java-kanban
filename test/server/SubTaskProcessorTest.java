@@ -2,7 +2,6 @@ package server;
 
 import com.google.gson.reflect.TypeToken;
 import model.SubTask;
-import model.Task;
 import model.enums.TaskStatus;
 import org.junit.jupiter.api.Test;
 import server.interfaces.BaseProcessorTest;
@@ -56,7 +55,7 @@ public class SubTaskProcessorTest extends BaseProcessorTest {
         assertEquals(200, response.statusCode());
 
         Type subtaskType = new TypeToken<SubTask>() {}.getType();
-        Task subtaskFromJson = gson.fromJson(response.body(), subtaskType);
+        SubTask subtaskFromJson = gson.fromJson(response.body(), subtaskType);
 
         assertNotNull(subtaskFromJson, "Задачи не возвращаются");
         assertEquals("s", subtaskFromJson.getName(), "Некорректное имя задачи");
