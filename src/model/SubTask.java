@@ -18,6 +18,7 @@ public class SubTask extends Task {
                    LocalDateTime startTime) {
         super(name, description, id, status, duration, startTime);
         this.epicTaskId = epicTaskId;
+        type = TaskType.SubTask;
     }
 
     public SubTask(String name,
@@ -28,6 +29,7 @@ public class SubTask extends Task {
                    LocalDateTime startTime) {
         super(name, description, status, duration, startTime);
         this.epicTaskId = epicTaskId;
+        type = TaskType.SubTask;
     }
 
     public SubTask(String name,
@@ -37,6 +39,7 @@ public class SubTask extends Task {
                    long duration) {
         super(name, description, status, duration);
         this.epicTaskId = epicTaskId;
+        type = TaskType.SubTask;
     }
 
     public int getEpicTaskId() {
@@ -47,7 +50,7 @@ public class SubTask extends Task {
     public String toString() {
         return String.format("%s,%s,%s,%s,%s,%s,%s,%s",
                 getId(),
-                TaskType.SubTask,
+                type,
                 getName(),
                 getStatus(),
                 getDescription(),

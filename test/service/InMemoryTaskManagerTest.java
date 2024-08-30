@@ -101,15 +101,15 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldReturnTasksById() {
-        Task task = tm.getTaskById(0).orElse(null);
+        Task task = tm.getTaskById(0);
         assertNotNull(task);
         assertEquals(task.getName(), "first_task");
 
-        SubTask st = tm.getSubTaskById(subTask.getId()).orElse(null);
+        SubTask st = tm.getSubTaskById(subTask.getId());
         assertNotNull(st);
         assertEquals(st.getName(), "first_subtask");
 
-        EpicTask et = tm.getEpicTaskById(epicTask.getId()).orElse(null);
+        EpicTask et = tm.getEpicTaskById(epicTask.getId());
         assertNotNull(et);
         assertEquals(et.getName(), "first_epic");
     }
@@ -118,7 +118,7 @@ class InMemoryTaskManagerTest {
     void taskWithGeneratedIdShouldNotConflictWithTaskWithAssignedId() {
         Task task = new Task("4", "4", TaskStatus.NEW, 30);
         tm.createTask(task);
-        Task optTask = tm.getTaskById(task.getId()).orElse(null);
+        Task optTask = tm.getTaskById(task.getId());
         assertEquals(tm.getTasks().size(), 1);
         assertNotNull(optTask);
         assertEquals(optTask.getName(), "4");

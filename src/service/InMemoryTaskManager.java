@@ -4,6 +4,8 @@ import model.EpicTask;
 import model.SubTask;
 import model.Task;
 import model.enums.TaskStatus;
+import service.exceptions.IntersectionException;
+import service.exceptions.NotFoundException;
 import service.interfaces.HistoryManager;
 import service.interfaces.TaskManager;
 import util.TimeMapper;
@@ -34,9 +36,35 @@ public class InMemoryTaskManager implements TaskManager {
         timeMapper = new TimeMapper(LocalDateTime.now());
     }
 
+    private void updatePrioritizedTask(Task previousTask, Task newTask) {
+        if (newTask.getStartTime() == null) {
+            if (previousTask.getStartTime() != null) {
+                timeMapper.remove(previousTask);
+                priorityTasks.remove(previousTask);
+            }
+            return;
+        }
+
+        if (previousTask.getStartTime() == null) {
+            if (timeMapper.hasCollision(newTask)) throw new IntersectionException();
+            timeMapper.add(newTask);
+            priorityTasks.add(newTask);
+            return;
+        }
+
+        timeMapper.remove(previousTask);
+        if (timeMapper.hasCollision(newTask)) {
+            timeMapper.add(previousTask);
+            throw new IntersectionException();
+        }
+
+        timeMapper.add(newTask);
+        priorityTasks.add(newTask);
+    }
+
     private void addToPrioritizedTasks(Task task) {
         if (task.getStartTime() == null) return;
-        if (timeMapper.hasCollision(task)) return;
+        if (timeMapper.hasCollision(task)) throw new IntersectionException();
 
         timeMapper.add(task);
         priorityTasks.add(task);
@@ -113,30 +141,30 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Optional<Task> getTaskById(int id) {
+    public Task getTaskById(int id) {
         Task task = tasks.get(id);
-        if (task == null) return Optional.empty();
+        if (task == null) throw new NotFoundException("task not found");
 
         historyManager.add(task);
-        return Optional.of(task);
+        return task;
     }
 
     @Override
-    public Optional<SubTask> getSubTaskById(int id) {
+    public SubTask getSubTaskById(int id) {
         SubTask task = subTasks.get(id);
-        if (task == null) return Optional.empty();
+        if (task == null) throw new NotFoundException("sub task not found");
 
         historyManager.add(task);
-        return Optional.of(task);
+        return task;
     }
 
     @Override
-    public Optional<EpicTask> getEpicTaskById(int id) {
+    public EpicTask getEpicTaskById(int id) {
         EpicTask task = epicTasks.get(id);
-        if (task == null) return Optional.empty();
+        if (task == null) throw new NotFoundException("epic task not found");
 
         historyManager.add(task);
-        return Optional.of(task);
+        return task;
     }
 
     @Override
@@ -161,21 +189,28 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) {
-        removeFromPrioritizedTasks(tasks.get(task.getId()));
-        addToPrioritizedTasks(task);
+        Task previousTask = tasks.get(task.getId());
+        if (previousTask == null) throw new NotFoundException("task not found");
+
+        updatePrioritizedTask(previousTask, task);
         tasks.put(task.getId(), task);
     }
 
     @Override
     public void updateSubTask(SubTask st) {
-        removeFromPrioritizedTasks(subTasks.get(st.getId()));
-        addToPrioritizedTasks(st);
+        SubTask previousTask = subTasks.get(st.getId());
+        if (previousTask == null) throw new NotFoundException("subtask not found");
+
+        updatePrioritizedTask(previousTask, st);
         subTasks.put(st.getId(), st);
         refreshEpic(epicTasks.get(st.getEpicTaskId()));
     }
 
     @Override
     public void updateEpicTask(EpicTask et) {
+        EpicTask previousTask = epicTasks.get(et.getId());
+        if (previousTask == null) throw new NotFoundException("epic task not found");
+
         subTasks.values().stream()
                 .filter(st -> epicTasks.get(st.getEpicTaskId()).equals(et))
                 .peek(et::addSubTask).close();
@@ -184,32 +219,40 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeTaskById(int id) {
-        removeFromPrioritizedTasks(tasks.get(id));
-        tasks.remove(id);
+    public Task removeTaskById(int id) {
+        Task task = tasks.remove(id);
+        if (task == null) throw new NotFoundException("task not found");
+
+        removeFromPrioritizedTasks(task);
         historyManager.remove(id);
+        return task;
     }
 
     @Override
-    public void removeSubTaskById(int id) {
-        removeFromPrioritizedTasks(subTasks.get(id));
-        SubTask st = subTasks.get(id);
-        EpicTask et = epicTasks.get(st.getEpicTaskId());
-        et.removeSubTask(st);
+    public SubTask removeSubTaskById(int id) {
+        SubTask subTask = subTasks.remove(id);
+        if (subTask == null) throw new NotFoundException("subtask not found");
+
+        removeFromPrioritizedTasks(subTask);
+        EpicTask et = epicTasks.get(subTask.getEpicTaskId());
+        et.removeSubTask(subTask);
         refreshEpic(et);
-        subTasks.remove(id);
         historyManager.remove(id);
+        return subTask;
     }
 
     @Override
-    public void removeEpicTaskById(int id) {
-        epicTasks.get(id).getSubTaskIds().forEach(sId -> {
+    public EpicTask removeEpicTaskById(int id) {
+        EpicTask epicTask = epicTasks.remove(id);
+        if (epicTask == null) throw new NotFoundException("epic task not found");
+
+        epicTask.getSubTaskIds().forEach(sId -> {
             removeFromPrioritizedTasks(subTasks.get(sId));
             subTasks.remove(sId);
             historyManager.remove(sId);
         });
-        epicTasks.remove(id);
         historyManager.remove(id);
+        return epicTask;
     }
 
     @Override
@@ -262,6 +305,6 @@ public class InMemoryTaskManager implements TaskManager {
 
         et.setDuration(Duration.ofMinutes(duration));
         if (!startTime.equals(LocalDateTime.MAX)) et.setStartTime(startTime);
-        if (!startTime.equals(LocalDateTime.MIN)) et.setEndTime(endTime);
+        if (!endTime.equals(LocalDateTime.MIN)) et.setEndTime(endTime);
     }
 }

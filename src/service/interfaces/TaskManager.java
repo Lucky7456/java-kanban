@@ -5,7 +5,6 @@ import model.SubTask;
 import model.Task;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface TaskManager {
     List<Task> getPrioritizedTasks();
@@ -24,11 +23,11 @@ public interface TaskManager {
 
     void removeAllEpicTasks();
 
-    Optional<Task> getTaskById(int id);
+    Task getTaskById(int id);
 
-    Optional<SubTask> getSubTaskById(int id);
+    SubTask getSubTaskById(int id);
 
-    Optional<EpicTask> getEpicTaskById(int id);
+    EpicTask getEpicTaskById(int id);
 
     void createTask(Task task);
 
@@ -42,11 +41,11 @@ public interface TaskManager {
 
     void updateEpicTask(EpicTask et);
 
-    void removeTaskById(int id);
+    Task removeTaskById(int id);
 
-    void removeSubTaskById(int id);
+    SubTask removeSubTaskById(int id);
 
-    void removeEpicTaskById(int id);
+    EpicTask removeEpicTaskById(int id);
 
     List<SubTask> getSubTasks(EpicTask epicTask);
 

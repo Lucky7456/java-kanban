@@ -3,9 +3,10 @@ package model;
 import model.enums.TaskStatus;
 import model.enums.TaskType;
 
-import java.time.ZoneId;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public class EpicTask extends Task {
     private final HashSet<Integer> subTaskIds;
@@ -16,12 +17,14 @@ public class EpicTask extends Task {
                     int id) {
         super(name, description, id, TaskStatus.NEW, 0, null);
         this.subTaskIds = new HashSet<>();
+        type = TaskType.EpicTask;
     }
 
     public EpicTask(String name,
                     String description) {
         super(name, description, TaskStatus.NEW, 0);
         this.subTaskIds = new HashSet<>();
+        type = TaskType.EpicTask;
     }
 
     public List<Integer> getSubTaskIds() {
@@ -47,20 +50,5 @@ public class EpicTask extends Task {
     @Override
     public LocalDateTime getEndTime() {
         return endTime;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s,%s,%s,%s,%s,0,%s,%s",
-                getId(),
-                TaskType.EpicTask,
-                getName(),
-                getStatus(),
-                getDescription(),
-                getDuration().toMinutes(),
-                getStartTime() != null ?
-                        getStartTime().atZone(ZoneId.systemDefault()).toEpochSecond()
-                        : null
-        );
     }
 }

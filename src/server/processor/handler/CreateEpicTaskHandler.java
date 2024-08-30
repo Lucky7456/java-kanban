@@ -1,0 +1,19 @@
+package server.processor.handler;
+
+import com.sun.net.httpserver.HttpExchange;
+import server.processor.handler.interfaces.BaseCommandHandler;
+import service.interfaces.TaskManager;
+
+import java.io.IOException;
+
+public class CreateEpicTaskHandler extends BaseCommandHandler {
+    public CreateEpicTaskHandler(String endpoint, TaskManager tm) {
+        super(endpoint, tm);
+    }
+
+    @Override
+    public void processRequest(HttpExchange exchange) throws IOException {
+        tm.createEpicTask(epicFromJson(exchange));
+        sendSuccess(exchange);
+    }
+}

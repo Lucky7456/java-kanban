@@ -24,9 +24,9 @@ public class Main {
 
         LocalDateTime taskStart1 = LocalDateTime.now().plusDays(1);
         LocalDateTime taskStart2 = taskStart1.plusMinutes(50);
-        LocalDateTime taskStart3 = taskStart1.plusMinutes(20);
-        LocalDateTime taskStart4 = taskStart2.plusMinutes(30);
-        LocalDateTime taskStart5 = taskStart2.plusMinutes(30);
+        LocalDateTime taskStart3 = taskStart1.plusMinutes(80);
+        LocalDateTime taskStart4 = taskStart2.plusMinutes(120);
+        LocalDateTime taskStart5 = taskStart2.plusMinutes(300);
 
         TaskManager tm = Managers.getDefault(file);
         Task t1 = new Task("first", "to do", TaskStatus.NEW, 30, taskStart1);

@@ -12,6 +12,7 @@ public class Task {
     private static int uniqueIdCounter;
     private final String name;
     private final String description;
+    protected TaskType type;
     private final int id;
     private TaskStatus status;
     private Duration duration;
@@ -24,6 +25,7 @@ public class Task {
         this.status = status;
         this.duration = Duration.ofMinutes(duration);
         this.startTime = startTime;
+        type = TaskType.Task;
     }
 
     public Task(String name, String description, TaskStatus status, long duration, LocalDateTime startTime) {
@@ -33,6 +35,7 @@ public class Task {
         this.startTime = startTime;
         this.id = uniqueIdCounter++;
         this.status = status;
+        type = TaskType.Task;
     }
 
     public Task(String name, String description, TaskStatus status, long duration) {
@@ -42,6 +45,7 @@ public class Task {
         this.id = uniqueIdCounter++;
         this.status = status;
         startTime = null;
+        type = TaskType.Task;
     }
 
     public Duration getDuration() {
@@ -101,7 +105,7 @@ public class Task {
     public String toString() {
         return String.format("%s,%s,%s,%s,%s,0,%s,%s",
                 getId(),
-                TaskType.Task,
+                type,
                 getName(),
                 getStatus(),
                 getDescription(),
