@@ -29,6 +29,7 @@ public class Managers {
 
     public static Gson getGson() {
         return new GsonBuilder()
+                .serializeNulls()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .registerTypeAdapter(Duration.class, new DurationAdapter())
                 .create();
