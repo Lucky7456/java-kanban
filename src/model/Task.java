@@ -33,7 +33,7 @@ public class Task {
         this.description = description;
         this.duration = Duration.ofMinutes(duration);
         this.startTime = startTime;
-        this.id = uniqueIdCounter++;
+        id = uniqueIdCounter++;
         this.status = status;
         type = TaskType.Task;
     }
@@ -42,7 +42,7 @@ public class Task {
         this.name = name;
         this.description = description;
         this.duration = Duration.ofMinutes(duration);
-        this.id = uniqueIdCounter++;
+        id = uniqueIdCounter++;
         this.status = status;
         startTime = null;
         type = TaskType.Task;

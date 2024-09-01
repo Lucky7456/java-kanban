@@ -23,7 +23,7 @@ public class DurationAdapter extends TypeAdapter<Duration> {
     public Duration read(final JsonReader jsonReader) throws IOException {
         if (jsonReader.peek() == JsonToken.NULL) {
             jsonReader.nextNull();
-            return null;
+            return Duration.ofMinutes(0);
         }
 
         return Duration.ofMinutes(Long.parseLong(jsonReader.nextString()));
