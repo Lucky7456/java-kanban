@@ -13,7 +13,6 @@ import util.TimeMapper;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     private static final int BIT = 1;
@@ -257,9 +256,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<SubTask> getSubTasks(EpicTask epicTask) {
-        return subTasks.values().stream()
-                .filter(st -> epicTask.getSubTaskIds().contains(st.getId()))
-                .collect(Collectors.toList());
+        return new ArrayList<>(epicTask.getSubTaskIds().
+                stream().map(subTasks::get).toList());
     }
 
     @Override
