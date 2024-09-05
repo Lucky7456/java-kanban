@@ -56,9 +56,8 @@ public class SubTask extends Task {
                 getDescription(),
                 epicTaskId,
                 getDuration().toMinutes(),
-                getStartTime() != null ?
+                getStartTime() == null ? null :
                         getStartTime().atZone(ZoneId.systemDefault()).toEpochSecond()
-                        : null
         );
     }
 }

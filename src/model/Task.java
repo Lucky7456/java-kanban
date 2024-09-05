@@ -65,7 +65,7 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
-        return startTime != null ? startTime.plus(duration) : null;
+        return startTime == null ? null : startTime.plus(duration);
     }
 
     @Override
@@ -110,9 +110,8 @@ public class Task {
                 getStatus(),
                 getDescription(),
                 getDuration().toMinutes(),
-                getStartTime() != null ?
+                getStartTime() == null ? null :
                         getStartTime().atZone(ZoneId.systemDefault()).toEpochSecond()
-                        : null
         );
     }
 }
